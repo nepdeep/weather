@@ -7,20 +7,26 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #edf7ff;
-      --bg-2: #f8fbff;
+      --bg: #fdf5ed;
+      --bg-2: #fffaf4;
       --panel: rgba(255, 255, 255, 0.92);
       --panel-solid: #ffffff;
-      --text: #17324d;
-      --muted: #60758b;
-      --faint: #8ca0b3;
-      --border: #d8e8f5;
-      --accent: #1677c9;
-      --accent-strong: #0d5da5;
-      --mint: #dff8ed;
-      --sun: #fff1bc;
-      --warn: #fff2e2;
-      --shadow: 0 18px 50px rgba(43, 107, 158, 0.14);
+      --text: #322e37;
+      --muted: #8c8492;
+      --faint: #b7adb8;
+      --border: #f0e4d6;
+      --accent: #f0913e;
+      --accent-strong: #e07a28;
+      --accent-soft: #fce6d0;
+      --accent-soft-border: #f6d2ae;
+      --mint: #e7f6ee;
+      --sun: #ffe9c4;
+      --warn: #fff1e2;
+      --shadow: 0 18px 50px rgba(199, 138, 79, 0.16);
+      --r-sm: 10px;
+      --r-md: 14px;
+      --r-lg: 18px;
+      --r-pill: 999px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -33,9 +39,9 @@
       min-height: 100vh;
       color: var(--text);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(237, 247, 255, 0.95)),
-        radial-gradient(circle at top left, #ccecff 0, transparent 34rem),
-        linear-gradient(135deg, #edf7ff 0%, #f7fbff 50%, #eef9f4 100%);
+        radial-gradient(circle at top left, #ffe5cb 0, transparent 34rem),
+        radial-gradient(circle at top right, #fff0e2 0, transparent 30rem),
+        linear-gradient(135deg, #fdf5ed 0%, #fefaf4 50%, #fdf1e7 100%);
     }
 
     button,
@@ -56,9 +62,41 @@
 
     .app-header {
       display: grid;
-      gap: 16px;
-      align-items: end;
+      gap: 18px;
       margin-bottom: 18px;
+    }
+
+    .brand-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: auto;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      font-size: 1.3rem;
+      line-height: 1;
+      filter: drop-shadow(0 4px 8px rgba(224, 122, 40, 0.3));
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
     }
 
     .title-block h1 {
@@ -75,23 +113,11 @@
     }
 
     .controls {
-      display: grid;
-      gap: 10px;
-      align-items: center;
+      width: min(430px, 100%);
     }
 
     .search-wrap {
       position: relative;
-    }
-
-    .search-label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     .search-row {
@@ -104,22 +130,22 @@
     .ghost-button,
     .refresh-button {
       min-height: 44px;
-      border-radius: 8px;
+      border-radius: var(--r-md);
     }
 
     .search-input {
       width: 100%;
       border: 1px solid var(--border);
-      padding: 0 12px;
+      padding: 0 14px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.92);
       outline: none;
       transition: border 160ms ease, box-shadow 160ms ease;
     }
 
     .search-input:focus {
-      border-color: rgba(22, 119, 201, 0.7);
-      box-shadow: 0 0 0 4px rgba(22, 119, 201, 0.12);
+      border-color: rgba(240, 145, 62, 0.75);
+      box-shadow: 0 0 0 4px rgba(240, 145, 62, 0.16);
     }
 
     .ghost-button,
@@ -128,19 +154,18 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0 13px;
-      color: var(--accent-strong);
-      background: var(--panel-solid);
-      border: 1px solid var(--border);
+      padding: 0 18px;
+      border-radius: var(--r-pill);
+      color: #ffffff;
+      background: var(--accent);
+      border: 1px solid var(--accent);
       font-weight: 800;
       white-space: nowrap;
+      box-shadow: 0 10px 22px rgba(224, 122, 40, 0.26);
     }
 
     .refresh-button {
-      color: #ffffff;
-      background: var(--accent);
-      border-color: var(--accent);
-      box-shadow: 0 10px 22px rgba(22, 119, 201, 0.22);
+      box-shadow: 0 12px 24px rgba(224, 122, 40, 0.3);
     }
 
     .refresh-button:disabled,
@@ -157,7 +182,7 @@
       right: 0;
       overflow: hidden;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--r-md);
       background: #ffffff;
       box-shadow: var(--shadow);
     }
@@ -169,7 +194,7 @@
       color: var(--text);
       background: #ffffff;
       text-align: left;
-      border-bottom: 1px solid #edf4fb;
+      border-bottom: 1px solid #f4ece2;
     }
 
     .suggestion:last-child {
@@ -178,7 +203,7 @@
 
     .suggestion:hover,
     .suggestion:focus {
-      background: #eef7ff;
+      background: #fdf1e6;
       outline: none;
     }
 
@@ -204,48 +229,34 @@
     }
 
     .view-style-picker {
-      display: grid;
-      gap: 12px;
-      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-bottom: 18px;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.76);
-      box-shadow: 0 12px 34px rgba(43, 107, 158, 0.1);
     }
 
-    .view-style-picker h2 {
-      margin: 3px 0 0;
-      font-size: clamp(1.08rem, 3vw, 1.35rem);
-      line-height: 1.2;
-      letter-spacing: 0;
-    }
-
-    .view-buttons,
-    .chip-group {
+    .view-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .view-button,
-    .chip {
+    .view-button {
       min-height: 38px;
-      border-radius: 8px;
-      padding: 0 12px;
-      color: var(--accent-strong);
-      background: #ffffff;
+      border-radius: var(--r-pill);
+      padding: 0 16px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.7);
       border: 1px solid var(--border);
       font-weight: 900;
+      transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
     }
 
-    .view-button.is-active,
-    .chip.is-active {
-      color: #ffffff;
-      background: var(--accent);
-      border-color: var(--accent);
-      box-shadow: 0 8px 18px rgba(22, 119, 201, 0.18);
+    .view-button.is-active {
+      color: var(--accent-strong);
+      background: var(--accent-soft);
+      border-color: var(--accent-soft-border);
+      box-shadow: 0 8px 18px rgba(224, 122, 40, 0.14);
     }
 
     .feature-grid {
@@ -259,17 +270,17 @@
       overflow: hidden;
       min-height: 184px;
       padding: 18px;
-      border: 1px solid rgba(216, 232, 245, 0.9);
-      border-radius: 8px;
+      border: 1px solid rgba(240, 228, 214, 0.9);
+      border-radius: var(--r-lg);
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(241, 249, 255, 0.88)),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 246, 237, 0.9)),
         var(--panel);
       box-shadow: var(--shadow);
     }
 
     .forecast-card.tomorrow {
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 251, 245, 0.9)),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 243, 233, 0.92)),
         var(--panel);
     }
 
@@ -299,7 +310,7 @@
     .weather-icon {
       line-height: 1;
       font-size: 3.4rem;
-      filter: drop-shadow(0 8px 14px rgba(42, 93, 130, 0.16));
+      filter: drop-shadow(0 8px 14px rgba(199, 138, 79, 0.2));
     }
 
     .temps {
@@ -332,9 +343,9 @@
     .metric {
       min-width: 0;
       padding: 10px;
-      border-radius: 8px;
-      background: rgba(237, 247, 255, 0.76);
-      border: 1px solid rgba(216, 232, 245, 0.8);
+      border-radius: var(--r-sm);
+      background: rgba(253, 240, 228, 0.7);
+      border: 1px solid rgba(240, 224, 208, 0.8);
     }
 
     .metric span {
@@ -356,12 +367,11 @@
     }
 
     .calendar-panel,
-    .timeline-panel,
-    .planner-panel {
+    .timeline-panel {
       overflow: hidden;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.84);
+      border-radius: var(--r-lg);
+      background: rgba(255, 255, 255, 0.86);
       box-shadow: var(--shadow);
     }
 
@@ -398,7 +408,7 @@
     .weekday {
       padding: 10px 4px;
       color: var(--muted);
-      background: #f5faff;
+      background: #fdf6ef;
       border-bottom: 1px solid var(--border);
       font-size: clamp(0.68rem, 2.6vw, 0.86rem);
       font-weight: 900;
@@ -420,19 +430,19 @@
     }
 
     .day-cell.is-today {
-      background: linear-gradient(180deg, #fff9de, #ffffff 70%);
-      box-shadow: inset 0 0 0 2px #f4bd38;
+      background: linear-gradient(180deg, #ffe7d1, #ffffff 70%);
+      box-shadow: inset 0 0 0 2px #f2a65e;
     }
 
     .day-cell.is-empty,
     .day-cell.is-outside {
       color: var(--faint);
-      background: rgba(245, 249, 252, 0.64);
+      background: rgba(250, 244, 237, 0.6);
     }
 
     .day-cell.is-unavailable {
-      color: #8aa0b2;
-      background: rgba(247, 250, 253, 0.76);
+      color: var(--faint);
+      background: rgba(251, 246, 240, 0.72);
     }
 
     .day-top {
@@ -456,7 +466,7 @@
 
     .is-today .day-number {
       color: #ffffff;
-      background: #d18900;
+      background: #ee8a36;
     }
 
     .day-icon {
@@ -497,8 +507,7 @@
       line-height: 1.16;
     }
 
-    .timeline-body,
-    .planner-controls {
+    .timeline-body {
       padding: 14px;
     }
 
@@ -518,7 +527,7 @@
       min-height: 142px;
       padding: 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--r-md);
       color: var(--text);
       background: #ffffff;
       text-align: left;
@@ -527,12 +536,12 @@
 
     .timeline-day.is-selected {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(22, 119, 201, 0.14);
+      box-shadow: 0 0 0 3px rgba(240, 145, 62, 0.18);
     }
 
     .timeline-day.is-unavailable {
       color: var(--faint);
-      background: #f6f9fc;
+      background: #fbf6f0;
     }
 
     .timeline-date {
@@ -555,13 +564,13 @@
       height: 8px;
       overflow: hidden;
       border-radius: 999px;
-      background: #e7f1f8;
+      background: #f4e7d8;
     }
 
     .temp-fill {
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, #49a7e8, #f2c84c);
+      background: linear-gradient(90deg, #f7c98a, #ee7e3c);
     }
 
     .timeline-detail {
@@ -570,9 +579,9 @@
       margin-top: 4px;
       padding: 16px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--r-lg);
       background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 248, 255, 0.9)),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 245, 236, 0.92)),
         #ffffff;
     }
 
@@ -594,98 +603,6 @@
       line-height: 1;
     }
 
-    .planner-controls {
-      display: grid;
-      gap: 12px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(247, 251, 255, 0.72);
-    }
-
-    .sort-label {
-      display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .sort-select {
-      min-height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0 10px;
-      color: var(--text);
-      background: #ffffff;
-      font: inherit;
-      font-weight: 800;
-    }
-
-    .planner-grid {
-      display: grid;
-      gap: 10px;
-      padding: 14px;
-    }
-
-    .planner-card {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: center;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #ffffff;
-    }
-
-    .planner-card.is-unavailable {
-      color: var(--faint);
-      background: #f6f9fc;
-    }
-
-    .planner-date {
-      display: grid;
-      place-items: center;
-      width: 54px;
-      height: 54px;
-      border-radius: 8px;
-      background: #eef7ff;
-      font-weight: 900;
-    }
-
-    .planner-date span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.68rem;
-      text-transform: uppercase;
-    }
-
-    .planner-main {
-      min-width: 0;
-    }
-
-    .planner-main strong {
-      display: block;
-      font-size: 1rem;
-    }
-
-    .planner-metrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 800;
-    }
-
-    .planner-metrics span {
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: #edf7ff;
-    }
-
     .empty-state {
       padding: 18px;
       color: var(--muted);
@@ -696,7 +613,7 @@
     .loading-skeleton {
       position: relative;
       overflow: hidden;
-      background: #eff7fd;
+      background: #f8ede0;
     }
 
     .loading-skeleton::after {
@@ -719,27 +636,8 @@
         padding: 38px 24px 52px;
       }
 
-      .app-header {
-        grid-template-columns: 1fr minmax(360px, 430px);
-      }
-
-      .view-style-picker,
-      .controls {
-        justify-items: stretch;
-      }
-
-      .view-style-picker {
-        grid-template-columns: 1fr auto;
-        padding: 16px;
-      }
-
       .feature-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .planner-controls {
-        grid-template-columns: 1fr 190px;
-        align-items: end;
       }
 
       .calendar-header {
@@ -766,8 +664,7 @@
       }
 
       .calendar-panel,
-      .timeline-panel,
-      .planner-panel {
+      .timeline-panel {
         border-radius: 0;
         margin-inline: -9px;
         border-left: 0;
@@ -798,46 +695,42 @@
       .timeline-strip {
         grid-auto-columns: minmax(104px, 42vw);
       }
-
-      .planner-card {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="app-header">
-      <div class="title-block">
-        <h1>30-Day Weather Calendar</h1>
-        <p id="locationSummary">Eindhoven, Netherlands</p>
+      <div class="brand-bar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">☀️</span>
+          <span id="brandName">EINDHOVEN</span>
+        </div>
+        <section class="controls" aria-label="Weather controls">
+          <div class="search-wrap">
+            <div class="search-row">
+              <input class="search-input" id="cityInput" type="search" placeholder="Search city" autocomplete="off" aria-autocomplete="list" aria-expanded="false">
+              <button class="ghost-button" id="searchButton" type="button">Search</button>
+            </div>
+            <div class="suggestions" id="suggestions" hidden></div>
+          </div>
+        </section>
       </div>
 
-      <section class="controls" aria-label="Weather controls">
-        <div class="search-wrap">
-          <label class="search-label" for="cityInput">Location</label>
-          <div class="search-row">
-            <input class="search-input" id="cityInput" type="search" placeholder="Search city" autocomplete="off" aria-autocomplete="list" aria-expanded="false">
-            <button class="ghost-button" id="searchButton" type="button">Search</button>
-          </div>
-          <div class="suggestions" id="suggestions" hidden></div>
+      <div class="title-row">
+        <div class="title-block">
+          <h1>30-Day Weather Calendar</h1>
+          <p id="locationSummary">Eindhoven, Netherlands</p>
         </div>
         <button class="refresh-button" id="refreshButton" type="button">↻ Refresh</button>
-      </section>
+      </div>
     </header>
 
     <p class="status" id="status" role="status" aria-live="polite">Loading forecast...</p>
 
-    <section class="view-style-picker" aria-label="Presentation style">
-      <div>
-        <div class="month-note">View style</div>
-        <h2>Choose your forecast layout</h2>
-      </div>
-      <div class="view-buttons" role="tablist" aria-label="Forecast presentation styles">
-        <button class="view-button is-active" type="button" data-view="calendar" role="tab" aria-selected="true">Calendar</button>
-        <button class="view-button" type="button" data-view="timeline" role="tab" aria-selected="false">Timeline</button>
-        <button class="view-button" type="button" data-view="planner" role="tab" aria-selected="false">Planner</button>
-      </div>
+    <section class="view-style-picker view-buttons" role="tablist" aria-label="Forecast presentation styles">
+      <button class="view-button is-active" type="button" data-view="calendar" role="tab" aria-selected="true">Calendar</button>
+      <button class="view-button" type="button" data-view="timeline" role="tab" aria-selected="false">Timeline</button>
     </section>
 
     <section class="feature-grid" aria-label="Featured forecast cards">
@@ -877,35 +770,6 @@
         <div class="timeline-strip" id="timelineStrip" aria-label="Forecast days"></div>
         <article class="timeline-detail" id="timelineDetail"></article>
       </div>
-    </section>
-
-    <section class="planner-panel view-panel" id="plannerPanel" data-view-panel="planner" aria-label="Forecast planner" hidden>
-      <div class="calendar-header">
-        <div>
-          <div class="month-note">Planner</div>
-          <h2>Find useful weather windows</h2>
-        </div>
-        <div class="calendar-meta" id="plannerMeta">Filter and sort days</div>
-      </div>
-      <div class="planner-controls" aria-label="Planner filters">
-        <div class="chip-group" id="plannerFilters">
-          <button class="chip is-active" type="button" data-filter="all">All</button>
-          <button class="chip" type="button" data-filter="rain">Rain likely</button>
-          <button class="chip" type="button" data-filter="dry">Dry</button>
-          <button class="chip" type="button" data-filter="wind">Windy</button>
-          <button class="chip" type="button" data-filter="missing">No forecast</button>
-        </div>
-        <label class="sort-label" for="plannerSort">
-          Sort
-          <select id="plannerSort" class="sort-select">
-            <option value="date">Date</option>
-            <option value="rain">Rain chance</option>
-            <option value="temp">Warmest</option>
-            <option value="wind">Wind</option>
-          </select>
-        </label>
-      </div>
-      <div class="planner-grid" id="plannerGrid"></div>
     </section>
   </main>
 
@@ -956,6 +820,7 @@
     };
 
     const els = {
+      brandName: document.querySelector("#brandName"),
       locationSummary: document.querySelector("#locationSummary"),
       cityInput: document.querySelector("#cityInput"),
       searchButton: document.querySelector("#searchButton"),
@@ -971,11 +836,7 @@
       calendarGrid: document.querySelector("#calendarGrid"),
       timelineMeta: document.querySelector("#timelineMeta"),
       timelineStrip: document.querySelector("#timelineStrip"),
-      timelineDetail: document.querySelector("#timelineDetail"),
-      plannerMeta: document.querySelector("#plannerMeta"),
-      plannerFilters: document.querySelector("#plannerFilters"),
-      plannerSort: document.querySelector("#plannerSort"),
-      plannerGrid: document.querySelector("#plannerGrid")
+      timelineDetail: document.querySelector("#timelineDetail")
     };
 
     let locationState = readSavedLocation();
@@ -984,13 +845,12 @@
     let searchTimer = null;
     let activeView = "calendar";
     let selectedTimelineKey = null;
-    let plannerFilter = "all";
-    let plannerSort = "date";
 
     init();
 
     function init() {
       els.cityInput.value = locationState.name;
+      setBrand();
       bindEvents();
       renderLoading();
       loadForecast();
@@ -1017,16 +877,6 @@
       els.viewButtons.forEach((button) => {
         button.addEventListener("click", () => setActiveView(button.dataset.view));
       });
-      els.plannerFilters.addEventListener("click", (event) => {
-        const button = event.target.closest(".chip");
-        if (!button) return;
-        plannerFilter = button.dataset.filter;
-        renderPlanner(getCurrentTodayKey());
-      });
-      els.plannerSort.addEventListener("change", () => {
-        plannerSort = els.plannerSort.value;
-        renderPlanner(getCurrentTodayKey());
-      });
     }
 
     function setActiveView(view) {
@@ -1039,12 +889,6 @@
       els.viewPanels.forEach((panel) => {
         panel.hidden = panel.dataset.viewPanel !== view;
       });
-    }
-
-    function getCurrentTodayKey() {
-      const timezone = forecastState?.timezone || locationState.timezone || DEFAULT_LOCATION.timezone;
-      const todayParts = getDatePartsInTimeZone(new Date(), timezone);
-      return toDateKey(todayParts.year, todayParts.month, todayParts.day);
     }
 
     function readSavedLocation() {
@@ -1129,11 +973,11 @@
       const tomorrowKey = addDays(todayKey, 1);
 
       els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone}`;
+      setBrand();
       renderFeatureCard(els.todayCard, "Today", todayKey, forecastState.byDate.get(todayKey));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", tomorrowKey, forecastState.byDate.get(tomorrowKey));
       renderCalendar(todayKey);
       renderTimeline(todayKey);
-      renderPlanner(todayKey);
       setActiveView(activeView);
       els.calendarMeta.textContent = `Forecast available ${formatShortDate(forecastState.startDate)}–${formatShortDate(forecastState.endDate)}`;
     }
@@ -1233,7 +1077,15 @@
     }
 
     function renderTimeline(todayKey) {
-      const days = getDisplayDays(todayKey);
+      const days = getTimelineDays(todayKey);
+
+      if (!days.length) {
+        els.timelineMeta.textContent = "Forecast unavailable";
+        els.timelineStrip.innerHTML = `<div class="empty-state">Forecast unavailable right now.</div>`;
+        els.timelineDetail.innerHTML = "";
+        return;
+      }
+
       const availableTemps = days
         .filter((entry) => entry.day && Number.isFinite(entry.day.max))
         .map((entry) => entry.day.max);
@@ -1244,7 +1096,7 @@
         selectedTimelineKey = todayKey;
       }
 
-      els.timelineMeta.textContent = `${days.filter((entry) => entry.day).length} forecast days, ${days.filter((entry) => !entry.day).length} empty days`;
+      els.timelineMeta.textContent = `Next ${days.length} days from today`;
       els.timelineStrip.innerHTML = days.map((entry) => {
         const day = entry.day;
         const isSelected = entry.dateKey === selectedTimelineKey;
@@ -1311,87 +1163,19 @@
       `;
     }
 
-    function renderPlanner(todayKey) {
-      const days = getDisplayDays(todayKey);
-      const filteredDays = days.filter((entry) => plannerMatches(entry));
-      const sortedDays = sortPlannerDays(filteredDays);
+    function getTimelineDays(todayKey) {
+      const endDate = forecastState.endDate;
+      if (!endDate || endDate < todayKey) return [];
 
-      els.plannerFilters.querySelectorAll(".chip").forEach((button) => {
-        button.classList.toggle("is-active", button.dataset.filter === plannerFilter);
-      });
-      els.plannerSort.value = plannerSort;
-      els.plannerMeta.textContent = `${sortedDays.length} of ${days.length} days shown`;
-
-      if (!sortedDays.length) {
-        els.plannerGrid.innerHTML = `<div class="empty-state">No days match this filter.</div>`;
-        return;
+      // Walk forward from today through the end of the available forecast range,
+      // so the timeline never shows past dates.
+      const days = [];
+      let cursor = todayKey;
+      for (let guard = 0; guard < 60 && cursor <= endDate; guard += 1) {
+        days.push({ dateKey: cursor, day: forecastState.byDate.get(cursor) });
+        cursor = addDays(cursor, 1);
       }
-
-      els.plannerGrid.innerHTML = sortedDays.map((entry) => {
-        const date = getDateParts(entry.dateKey);
-        const day = entry.day;
-        if (!day) {
-          return `
-            <article class="planner-card is-unavailable">
-              <div class="planner-date"><span>${formatCompactWeekday(entry.dateKey)}</span>${date.day}</div>
-              <div class="planner-main">
-                <strong>${formatShortDate(entry.dateKey)}</strong>
-                <div class="weather-label">No forecast yet</div>
-              </div>
-            </article>
-          `;
-        }
-
-        const [weatherLabel, icon] = weatherCodes[day.code] || ["Unknown", "❔"];
-        return `
-          <article class="planner-card">
-            <div class="planner-date"><span>${formatCompactWeekday(entry.dateKey)}</span>${date.day}</div>
-            <div class="planner-main">
-              <strong>${icon} ${formatShortDate(entry.dateKey)} · ${weatherLabel}</strong>
-              <div class="planner-metrics">
-                <span>${formatTemperature(day.max)} / ${formatTemperature(day.min)}</span>
-                <span>${formatPercent(day.rainProbability)} rain</span>
-                <span>${formatMillimeters(day.precipitation)}</span>
-                <span>${formatWind(day.wind)}</span>
-              </div>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
-
-    function getDisplayDays(todayKey) {
-      const calendarStartKey = getSundayStart(todayKey);
-      return Array.from({ length: 30 }, (_, index) => {
-        const dateKey = addDays(calendarStartKey, index);
-        return {
-          dateKey,
-          day: forecastState.byDate.get(dateKey)
-        };
-      });
-    }
-
-    function plannerMatches(entry) {
-      if (plannerFilter === "all") return true;
-      if (plannerFilter === "missing") return !entry.day;
-      if (!entry.day) return false;
-      if (plannerFilter === "rain") return Number(entry.day.rainProbability) >= 50 || Number(entry.day.precipitation) >= 2;
-      if (plannerFilter === "dry") return Number(entry.day.rainProbability) < 30 && Number(entry.day.precipitation) < 1;
-      if (plannerFilter === "wind") return Number(entry.day.wind) >= 25;
-      return true;
-    }
-
-    function sortPlannerDays(days) {
-      return [...days].sort((a, b) => {
-        if (plannerSort === "rain") return metricValue(b.day, "rainProbability") - metricValue(a.day, "rainProbability");
-        if (plannerSort === "temp") return metricValue(b.day, "max") - metricValue(a.day, "max");
-        if (plannerSort === "wind") return metricValue(b.day, "wind") - metricValue(a.day, "wind");
-        return a.dateKey.localeCompare(b.dateKey);
-      });
-    }
-
-    function metricValue(day, key) {
-      return day && Number.isFinite(day[key]) ? day[key] : -Infinity;
+      return days;
     }
 
     function renderLoading() {
@@ -1403,8 +1187,6 @@
       els.timelineMeta.textContent = "Fetching daily forecast";
       els.timelineStrip.innerHTML = Array.from({ length: 8 }, () => `<div class="timeline-day loading-skeleton"></div>`).join("");
       els.timelineDetail.innerHTML = `<div class="loading-skeleton" style="height: 120px; border-radius: 8px;"></div>`;
-      els.plannerMeta.textContent = "Fetching daily forecast";
-      els.plannerGrid.innerHTML = Array.from({ length: 4 }, () => `<div class="planner-card loading-skeleton" style="height: 78px;"></div>`).join("");
     }
 
     function renderUnavailableShell() {
@@ -1415,10 +1197,8 @@
       renderFeatureCard(els.tomorrowCard, "Tomorrow", addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 1));
       renderCalendar(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderTimeline(toDateKey(todayParts.year, todayParts.month, todayParts.day));
-      renderPlanner(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       els.calendarMeta.textContent = "Forecast unavailable";
       els.timelineMeta.textContent = "Forecast unavailable";
-      els.plannerMeta.textContent = "Forecast unavailable";
     }
 
     async function handleSearchInput() {
@@ -1520,6 +1300,7 @@
       };
       saveLocation(locationState);
       els.cityInput.value = locationState.name;
+      setBrand();
       searchResults = [];
       hideSuggestions();
       renderLoading();
@@ -1536,6 +1317,10 @@
       els.refreshButton.disabled = isBusy;
       els.searchButton.disabled = isBusy;
       els.refreshButton.textContent = isBusy ? "Loading..." : "↻ Refresh";
+    }
+
+    function setBrand() {
+      els.brandName.textContent = (locationState.name || "Weather").toUpperCase();
     }
 
     function setStatus(message, isError = false) {
