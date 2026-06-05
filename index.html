@@ -4,46 +4,55 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>30-Day Weather Calendar</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: dark;
 
       /* Cyber-Glass palette (ported from Timer.html) */
-      --bg-dark: #050505;
-      --glass-bg: rgba(20, 20, 30, 0.7);
+      --bg-dark: #0b0d13;
+      --glass-bg: rgba(24, 28, 38, 0.6);
       --glass-border: rgba(255, 255, 255, 0.08);
+      --accent-rgb: 0, 243, 255;       /* set by body[data-weather]; drives every accent + glow */
+      --accent-text: var(--neon-blue);
+      --accent-contrast: #000000;
       --neon-green: #00ff9d;
       --neon-red: #ff0055;
-      --neon-blue: #00f3ff;
+      --neon-blue: rgb(var(--accent-rgb));
       --neon-yellow: #ffe600;
       --neon-purple: #bd00ff;
-      --input-bg: rgba(0, 0, 0, 0.3);
+      --input-bg: rgba(255, 255, 255, 0.04);
       --font-display: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
       --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
       /* Semantic tokens mapped onto the cyber-glass palette */
       --bg: var(--bg-dark);
-      --bg-2: #0a0a12;
+      --bg-2: #10131b;
       --panel: var(--glass-bg);
-      --panel-solid: #14141e;
-      --text: #ffffff;
-      --text-primary: #ffffff;
+      --panel-solid: #161a24;
+      --text: #eef1f7;
+      --text-primary: #f5f7fc;
       --muted: #8899a6;
       --text-muted: #8899a6;
       --faint: #5b6675;
       --border: var(--glass-border);
       --accent: var(--neon-blue);
       --accent-strong: var(--neon-blue);
-      --accent-soft: rgba(0, 243, 255, 0.08);
-      --accent-soft-border: rgba(0, 243, 255, 0.35);
+      --accent-soft: rgba(var(--accent-rgb),0.08);
+      --accent-soft-border: rgba(var(--accent-rgb),0.35);
       --mint: rgba(0, 255, 157, 0.1);
       --sun: rgba(255, 230, 0, 0.12);
       --warn: rgba(255, 0, 85, 0.1);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --glow-a: 76, 29, 149;            /* background glow colors; set by body[data-weather] */
+      --glow-b: 14, 165, 233;
+      --glow-strength: 0.1;
+      --wash-a: 255, 206, 140;
+      --wash-b: 255, 184, 158;
+      --wash-strength: 0.55;
       --r-sm: 10px;
       --r-md: 14px;
-      --r-lg: 18px;
+      --r-lg: 20px;
       --r-pill: 999px;
       font-family: var(--font-body);
     }
@@ -53,65 +62,93 @@
       color-scheme: light;
 
       /* Base palette */
-      --bg-dark: #eef2f6;
-      --glass-bg: rgba(255, 255, 255, 0.75);
-      --glass-border: rgba(0, 0, 0, 0.1);
+      --bg-dark: #f4f6f9;
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(22, 42, 72, 0.09);
       --neon-green: #00a86b;
       --neon-red: #d60047;
-      --neon-blue: #008eb3;
+      --accent-rgb: 217, 138, 0;
+      --accent-text: #8a5b00;
+      --accent-contrast: #ffffff;
       --neon-yellow: #b08900;
       --neon-purple: #9000c4;
-      --input-bg: rgba(255, 255, 255, 0.8);
+      --input-bg: rgba(255, 255, 255, 0.55);
+      --wash-a: 255, 206, 140;
+      --wash-b: 255, 184, 158;
+      --wash-strength: 0.55;
 
       /* Semantic tokens — re-declare the var() indirections so they re-resolve to the light palette */
       --bg: var(--bg-dark);
       --panel: var(--glass-bg);
       --border: var(--glass-border);
-      --accent: var(--neon-blue);
-      --accent-strong: var(--neon-blue);
-      --bg-2: #f4f7fa;
+      --accent: var(--accent-text);
+      --accent-strong: var(--accent-text);
+      --bg-2: #f8fafc;
       --panel-solid: #ffffff;
-      --text: #1a202c;
-      --text-primary: #1a202c;
-      --muted: #586878;
-      --text-muted: #586878;
-      --faint: #9aa7b4;
-      --accent-soft: rgba(0, 142, 179, 0.1);
-      --accent-soft-border: rgba(0, 142, 179, 0.4);
-      --shadow: 0 18px 50px rgba(80, 110, 140, 0.18);
+      --text: #1e2633;
+      --text-primary: #131a24;
+      --muted: #5d6b7a;
+      --text-muted: #5d6b7a;
+      --faint: #9aa6b4;
+      --accent-soft: rgba(var(--accent-rgb), 0.1);
+      --accent-soft-border: rgba(var(--accent-rgb), 0.32);
+      --shadow: 0 18px 44px rgba(60, 84, 124, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.65);
 
       background-image:
-        radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.06), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.08), transparent 25%);
+        radial-gradient(circle at 12% 12%, rgba(var(--wash-a), var(--wash-strength)), transparent 42%),
+        radial-gradient(circle at 88% 8%, rgba(var(--wash-b), var(--wash-strength)), transparent 40%);
     }
 
     body.light-mode .calendar-header,
     body.light-mode .weekday {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.38);
     }
 
     body.light-mode .day-cell.is-empty,
     body.light-mode .day-cell.is-outside,
     body.light-mode .day-cell.is-unavailable {
-      background: rgba(0, 0, 0, 0.03);
+      background: rgba(22, 42, 72, 0.03);
+    }
+
+    body.light-mode .forecast-card,
+    body.light-mode .forecast-card.tomorrow,
+    body.light-mode .timeline-detail {
+      background:
+        linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), transparent 55%),
+        var(--panel);
     }
 
     body.light-mode .is-today .day-number {
-      color: #ffffff;
+      color: var(--accent-contrast);
+    }
+
+    body.light-mode .brand,
+    body.light-mode .ghost-button,
+    body.light-mode .refresh-button,
+    body.light-mode .theme-toggle,
+    body.light-mode .menu-toggle,
+    body.light-mode .view-button.is-active,
+    body.light-mode .refresh-button:disabled:hover,
+    body.light-mode .ghost-button:disabled:hover,
+    body.light-mode .condition-chip:not(.is-active):hover {
+      color: var(--accent-text);
     }
 
     body.light-mode .ghost-button,
     body.light-mode .refresh-button,
-    body.light-mode .theme-toggle {
-      background: rgba(0, 142, 179, 0.08);
-      border-color: rgba(0, 142, 179, 0.35);
+    body.light-mode .theme-toggle,
+    body.light-mode .menu-toggle {
+      background: rgba(var(--accent-rgb), 0.1);
+      border-color: rgba(var(--accent-rgb), 0.32);
     }
 
     body.light-mode .ghost-button:hover,
     body.light-mode .refresh-button:hover,
-    body.light-mode .theme-toggle:hover {
-      color: #ffffff;
-      box-shadow: 0 0 18px rgba(0, 142, 179, 0.4);
+    body.light-mode .theme-toggle:hover,
+    body.light-mode .menu-toggle:hover,
+    body.light-mode .menu-toggle.is-open {
+      color: var(--accent-contrast);
+      box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.3);
     }
 
     body.light-mode .loading-skeleton {
@@ -122,14 +159,98 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
     }
 
+    /* --- WEATHER-REACTIVE LIGHT WASHES --- */
+    body.light-mode[data-weather="clear"] {
+      --accent-rgb: 217, 138, 0;
+      --accent-text: #8a5b00;
+      --wash-a: 255, 206, 140;
+      --wash-b: 255, 184, 158;
+    }
+
+    body.light-mode[data-weather="fair"] {
+      --accent-rgb: 43, 143, 208;
+      --accent-text: #245f85;
+      --wash-a: 170, 210, 248;
+      --wash-b: 210, 220, 252;
+    }
+
+    body.light-mode[data-weather="cloud"] {
+      --accent-rgb: 92, 112, 138;
+      --accent-text: #56677d;
+      --wash-a: 198, 208, 220;
+      --wash-b: 212, 218, 228;
+    }
+
+    body.light-mode[data-weather="rain"] {
+      --accent-rgb: 24, 127, 176;
+      --accent-text: #245f76;
+      --wash-a: 168, 198, 224;
+      --wash-b: 190, 212, 230;
+    }
+
+    body.light-mode[data-weather="snow"] {
+      --accent-rgb: 74, 159, 212;
+      --accent-text: #3f718f;
+      --wash-a: 210, 230, 248;
+      --wash-b: 226, 238, 250;
+    }
+
+    body.light-mode[data-weather="storm"] {
+      --accent-rgb: 122, 95, 208;
+      --accent-text: #65539f;
+      --wash-a: 206, 196, 238;
+      --wash-b: 220, 210, 242;
+    }
+
+    /* --- WEATHER-REACTIVE ACCENTS (dark base) ---
+       JS sets body[data-weather] from today's condition; each bucket
+       recolors the accent and the two background glows. */
+    body:not(.light-mode)[data-weather="clear"] {
+      --accent-rgb: 255, 196, 0;
+      --glow-a: 255, 170, 40;
+      --glow-b: 255, 110, 70;
+    }
+
+    body:not(.light-mode)[data-weather="fair"] {
+      --accent-rgb: 64, 196, 255;
+      --glow-a: 40, 150, 240;
+      --glow-b: 150, 120, 255;
+    }
+
+    body:not(.light-mode)[data-weather="cloud"] {
+      --accent-rgb: 150, 180, 205;
+      --glow-a: 90, 110, 140;
+      --glow-b: 120, 130, 150;
+    }
+
+    body:not(.light-mode)[data-weather="rain"] {
+      --accent-rgb: 0, 190, 230;
+      --glow-a: 20, 100, 180;
+      --glow-b: 0, 150, 160;
+    }
+
+    body:not(.light-mode)[data-weather="snow"] {
+      --accent-rgb: 160, 215, 255;
+      --glow-a: 150, 200, 255;
+      --glow-b: 200, 220, 255;
+    }
+
+    body:not(.light-mode)[data-weather="storm"] {
+      --accent-rgb: 170, 120, 255;
+      --glow-a: 110, 60, 200;
+      --glow-b: 60, 40, 110;
+    }
+
     /* --- HEADER ACTIONS + THEME TOGGLE --- */
     .header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
+      margin-left: auto;
     }
 
-    .theme-toggle {
+    .theme-toggle,
+    .menu-toggle {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -138,17 +259,93 @@
       flex-shrink: 0;
       border-radius: var(--r-pill);
       color: var(--neon-blue);
-      background: rgba(0, 243, 255, 0.05);
-      border: 1px solid rgba(0, 243, 255, 0.3);
+      background: rgba(var(--accent-rgb),0.05);
+      border: 1px solid rgba(var(--accent-rgb),0.3);
       font-size: 1.15rem;
       line-height: 1;
       transition: all 0.2s ease;
     }
 
-    .theme-toggle:hover {
-      color: #000000;
+    .theme-toggle:hover,
+    .menu-toggle:hover,
+    .menu-toggle.is-open {
+      color: var(--accent-contrast);
       background: var(--neon-blue);
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+      box-shadow: 0 8px 26px rgba(var(--accent-rgb), 0.32);
+    }
+
+    .condition-menu-wrap {
+      position: relative;
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+
+    .condition-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 40;
+      width: min(360px, calc(100vw - 28px));
+      padding: 12px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-lg);
+      color: var(--text);
+      background: rgba(11, 13, 19, 0.78);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .condition-menu[hidden] {
+      display: none;
+    }
+
+    body.light-mode .condition-menu {
+      background: rgba(255, 255, 255, 0.84);
+      border-color: var(--border);
+    }
+
+    .condition-switcher {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .condition-switcher-label {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .condition-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 13px;
+      border-radius: var(--r-pill);
+      color: var(--text);
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: color 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .condition-chip:hover {
+      color: var(--neon-blue);
+      border-color: rgba(var(--accent-rgb), 0.32);
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.12);
+    }
+
+    .condition-chip.is-active {
+      color: var(--accent-contrast);
+      background: rgb(var(--accent-rgb));
+      border-color: rgb(var(--accent-rgb));
+      box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.3);
     }
 
     * {
@@ -158,12 +355,81 @@
     body {
       margin: 0;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
       color: var(--text);
       background-color: var(--bg-dark);
       background-image:
-        radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.15), transparent 25%);
+        radial-gradient(circle at 15% 50%, rgba(var(--glow-a), var(--glow-strength)), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(var(--glow-b), var(--glow-strength)), transparent 25%);
       background-attachment: fixed;
+      transition: background-color 0.6s ease, color 0.3s ease;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+
+    body[data-weather="clear"]::before {
+      opacity: 0.62;
+      background:
+        radial-gradient(circle at 82% 14%, rgba(var(--accent-rgb), 0.2), transparent 13%),
+        radial-gradient(circle at 77% 19%, rgba(255, 255, 255, 0.18), transparent 18%);
+      animation: sunBreathe 7s ease-in-out infinite;
+    }
+
+    body[data-weather="fair"]::before,
+    body[data-weather="cloud"]::before {
+      opacity: 0.48;
+      background:
+        radial-gradient(ellipse at 18% 18%, rgba(255, 255, 255, 0.2), transparent 22%),
+        radial-gradient(ellipse at 78% 24%, rgba(var(--accent-rgb), 0.14), transparent 25%),
+        radial-gradient(ellipse at 42% 78%, rgba(255, 255, 255, 0.16), transparent 28%);
+      animation: cloudDrift 18s ease-in-out infinite alternate;
+    }
+
+    body[data-weather="rain"]::after {
+      opacity: 0.34;
+      background-image: repeating-linear-gradient(
+        105deg,
+        transparent 0 18px,
+        rgba(var(--accent-rgb), 0.2) 18px 20px,
+        transparent 20px 32px
+      );
+      background-size: 135px 135px;
+      animation: rainFall 900ms linear infinite;
+    }
+
+    body[data-weather="snow"]::after {
+      opacity: 0.56;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.86) 0 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(var(--accent-rgb), 0.34) 0 1.2px, transparent 1.8px);
+      background-size: 72px 72px, 118px 118px;
+      animation: snowFall 13s linear infinite;
+    }
+
+    body[data-weather="storm"]::before {
+      opacity: 0.44;
+      background:
+        radial-gradient(circle at 16% 20%, rgba(var(--accent-rgb), 0.18), transparent 22%),
+        radial-gradient(circle at 78% 16%, rgba(255, 255, 255, 0.12), transparent 18%);
+      animation: stormPulse 5s ease-in-out infinite;
+    }
+
+    body[data-weather="storm"]::after {
+      opacity: 0;
+      background:
+        linear-gradient(115deg, transparent 0 46%, rgba(255, 255, 255, 0.58) 48%, transparent 52%),
+        linear-gradient(100deg, transparent 0 58%, rgba(var(--accent-rgb), 0.3) 60%, transparent 63%);
+      animation: lightningFlash 7s steps(1, end) infinite;
     }
 
     button,
@@ -177,6 +443,8 @@
     }
 
     .page {
+      position: relative;
+      z-index: 1;
       width: min(1180px, 100%);
       margin: 0 auto;
       padding: 22px 14px 32px;
@@ -201,17 +469,17 @@
       gap: 8px;
       margin-right: auto;
       color: var(--neon-blue);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: 0.95rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
     .brand-mark {
       font-size: 1.3rem;
       line-height: 1;
-      filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.5));
+      filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.32));
     }
 
     .title-row {
@@ -227,7 +495,7 @@
       font-size: clamp(1.75rem, 6vw, 3.1rem);
       line-height: 1.02;
       letter-spacing: -0.5px;
-      text-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+      text-shadow: 0 0 30px rgba(var(--accent-rgb),0.15);
     }
 
     .title-block p {
@@ -264,7 +532,7 @@
       color: var(--text);
       background: var(--input-bg);
       outline: none;
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       transition: border 160ms ease, box-shadow 160ms ease;
     }
 
@@ -273,8 +541,8 @@
     }
 
     .search-input:focus {
-      border-color: rgba(0, 243, 255, 0.75);
-      box-shadow: 0 0 0 4px rgba(0, 243, 255, 0.16);
+      border-color: rgba(var(--accent-rgb),0.75);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.13);
     }
 
     .ghost-button,
@@ -286,11 +554,11 @@
       padding: 0 18px;
       border-radius: var(--r-pill);
       color: var(--neon-blue);
-      background: rgba(0, 243, 255, 0.05);
-      border: 1px solid rgba(0, 243, 255, 0.3);
-      font-family: var(--font-display);
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      background: rgba(var(--accent-rgb),0.05);
+      border: 1px solid rgba(var(--accent-rgb),0.3);
+      font-family: var(--font-body);
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -298,9 +566,9 @@
 
     .ghost-button:hover,
     .refresh-button:hover {
-      color: #000000;
+      color: var(--accent-contrast);
       background: var(--neon-blue);
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+      box-shadow: 0 8px 26px rgba(var(--accent-rgb), 0.32);
     }
 
     .refresh-button:disabled,
@@ -312,7 +580,7 @@
     .refresh-button:disabled:hover,
     .ghost-button:disabled:hover {
       color: var(--neon-blue);
-      background: rgba(0, 243, 255, 0.05);
+      background: rgba(var(--accent-rgb),0.05);
       box-shadow: none;
     }
 
@@ -346,7 +614,7 @@
 
     .suggestion:hover,
     .suggestion:focus {
-      background: rgba(0, 243, 255, 0.08);
+      background: rgba(var(--accent-rgb),0.08);
       outline: none;
     }
 
@@ -394,10 +662,10 @@
       color: var(--muted);
       background: var(--input-bg);
       border: 1px solid var(--border);
-      font-family: var(--font-display);
-      font-weight: 700;
+      font-family: var(--font-body);
+      font-weight: 600;
       font-size: 0.82rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       transition: color 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
     }
@@ -406,13 +674,20 @@
       color: var(--neon-blue);
       background: var(--accent-soft);
       border-color: var(--accent-soft-border);
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.12);
     }
 
     .feature-grid {
       display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(224px, 78vw);
       gap: 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      padding: 2px 2px 10px;
       margin-bottom: 18px;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
     }
 
     .forecast-card {
@@ -423,11 +698,12 @@
       border: 1px solid var(--glass-border);
       border-radius: var(--r-lg);
       background:
-        linear-gradient(135deg, rgba(0, 243, 255, 0.06), transparent 55%),
+        linear-gradient(135deg, rgba(var(--accent-rgb),0.06), transparent 55%),
         var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: var(--shadow);
+      scroll-snap-align: start;
     }
 
     .forecast-card.tomorrow {
@@ -439,10 +715,10 @@
     .card-kicker,
     .month-note {
       color: var(--muted);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
@@ -463,7 +739,29 @@
     .weather-icon {
       line-height: 1;
       font-size: 3.4rem;
-      filter: drop-shadow(0 4px 14px rgba(0, 243, 255, 0.25));
+      transform-origin: 50% 55%;
+      filter: drop-shadow(0 6px 18px rgba(var(--accent-rgb), 0.18));
+    }
+
+    body[data-weather="clear"] #todayCard .weather-icon {
+      animation: sunnyFloat 4.8s ease-in-out infinite;
+    }
+
+    body[data-weather="fair"] #todayCard .weather-icon,
+    body[data-weather="cloud"] #todayCard .weather-icon {
+      animation: cloudBob 6s ease-in-out infinite;
+    }
+
+    body[data-weather="rain"] #todayCard .weather-icon {
+      animation: rainNod 1.8s ease-in-out infinite;
+    }
+
+    body[data-weather="snow"] #todayCard .weather-icon {
+      animation: snowDrift 5.5s ease-in-out infinite;
+    }
+
+    body[data-weather="storm"] #todayCard .weather-icon {
+      animation: stormJolt 5s ease-in-out infinite;
     }
 
     .temps {
@@ -476,7 +774,7 @@
       line-height: 1;
       font-weight: 800;
       color: var(--text-primary);
-      text-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      text-shadow: 0 0 26px rgba(var(--accent-rgb), 0.13);
     }
 
     .temp-min {
@@ -509,8 +807,8 @@
       display: block;
       color: var(--muted);
       font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
@@ -558,9 +856,9 @@
 
     .calendar-meta {
       color: var(--muted);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: 0.85rem;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .weekday-grid,
@@ -574,10 +872,10 @@
       color: var(--muted);
       background: rgba(0, 0, 0, 0.25);
       border-bottom: 1px solid var(--glass-border);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: clamp(0.68rem, 2.6vw, 0.82rem);
-      font-weight: 700;
-      letter-spacing: 0.05em;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       text-align: center;
     }
@@ -597,8 +895,8 @@
     }
 
     .day-cell.is-today {
-      background: linear-gradient(180deg, rgba(0, 243, 255, 0.12), rgba(0, 243, 255, 0.02) 70%);
-      box-shadow: inset 0 0 0 1px var(--neon-blue), 0 0 18px rgba(0, 243, 255, 0.12);
+      background: linear-gradient(180deg, rgba(var(--accent-rgb),0.12), rgba(var(--accent-rgb),0.02) 70%);
+      box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.4), 0 0 28px rgba(var(--accent-rgb), 0.1);
     }
 
     .day-cell.is-empty,
@@ -633,9 +931,9 @@
     }
 
     .is-today .day-number {
-      color: #000000;
+      color: var(--accent-contrast);
       background: var(--neon-blue);
-      box-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
+      box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.4);
     }
 
     .day-icon {
@@ -654,11 +952,21 @@
 
     .day-temps {
       margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
       font-family: var(--font-display);
       font-weight: 700;
       font-size: clamp(0.77rem, 2.7vw, 0.92rem);
       color: var(--text-primary);
-      white-space: nowrap;
+    }
+
+    .day-temps .t-lo {
+      color: var(--muted);
+    }
+
+    .day-temps .t-sep {
+      display: none;
     }
 
     .day-details {
@@ -709,7 +1017,7 @@
 
     .timeline-day.is-selected {
       border-color: var(--neon-blue);
-      box-shadow: 0 0 0 1px var(--neon-blue), 0 0 18px rgba(0, 243, 255, 0.18);
+      box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.45), 0 0 24px rgba(var(--accent-rgb), 0.12);
     }
 
     .timeline-day.is-unavailable {
@@ -719,10 +1027,10 @@
 
     .timeline-date {
       color: var(--muted);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
@@ -748,7 +1056,7 @@
       height: 100%;
       border-radius: inherit;
       background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
-      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+      box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
     }
 
     .timeline-detail {
@@ -759,7 +1067,7 @@
       border: 1px solid var(--glass-border);
       border-radius: var(--r-lg);
       background:
-        linear-gradient(135deg, rgba(0, 243, 255, 0.06), transparent 55%),
+        linear-gradient(135deg, rgba(var(--accent-rgb),0.06), transparent 55%),
         var(--input-bg);
     }
 
@@ -791,10 +1099,10 @@
 
     .recent-label {
       color: var(--muted);
-      font-family: var(--font-display);
+      font-family: var(--font-body);
       font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
     }
@@ -824,7 +1132,7 @@
     .recent-chip:hover {
       background: var(--accent-soft);
       border-color: var(--accent-soft-border);
-      box-shadow: 0 0 14px rgba(0, 243, 255, 0.15);
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.12);
     }
 
     .recent-chip-flag {
@@ -849,7 +1157,7 @@
       position: absolute;
       inset: 0;
       transform: translateX(-100%);
-      background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.12), transparent);
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.12), transparent);
       animation: shimmer 1.25s infinite;
     }
 
@@ -859,13 +1167,86 @@
       }
     }
 
+    @keyframes sunBreathe {
+      0%, 100% { transform: scale(1); filter: blur(0); }
+      50% { transform: scale(1.04); filter: blur(2px); }
+    }
+
+    @keyframes cloudDrift {
+      0% { transform: translate3d(-18px, 0, 0); }
+      100% { transform: translate3d(18px, 8px, 0); }
+    }
+
+    @keyframes rainFall {
+      0% { background-position: 0 0; }
+      100% { background-position: -36px 135px; }
+    }
+
+    @keyframes snowFall {
+      0% { background-position: 0 -80px, 0 -120px; }
+      100% { background-position: 28px 220px, -32px 260px; }
+    }
+
+    @keyframes stormPulse {
+      0%, 100% { filter: saturate(1); transform: scale(1); }
+      45% { filter: saturate(1.18); transform: scale(1.02); }
+      52% { filter: saturate(0.9); }
+    }
+
+    @keyframes lightningFlash {
+      0%, 68%, 72%, 100% { opacity: 0; }
+      69%, 71% { opacity: 0.32; }
+    }
+
+    @keyframes sunnyFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(4deg); }
+    }
+
+    @keyframes cloudBob {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
+    }
+
+    @keyframes rainNod {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(3px) rotate(-2deg); }
+    }
+
+    @keyframes snowDrift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(4px, -3px) rotate(3deg); }
+    }
+
+    @keyframes stormJolt {
+      0%, 72%, 100% { transform: translateX(0) rotate(0deg); }
+      74% { transform: translateX(-2px) rotate(-2deg); }
+      76% { transform: translateX(2px) rotate(2deg); }
+      78% { transform: translateX(0) rotate(0deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
     @media (min-width: 720px) {
       .page {
         padding: 38px 24px 52px;
       }
 
       .feature-grid {
+        grid-auto-flow: row;
+        grid-auto-columns: initial;
         grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow: visible;
+        padding: 0;
+        scroll-snap-type: none;
       }
 
       .calendar-header {
@@ -875,6 +1256,17 @@
       .day-cell {
         min-height: 142px;
         padding: 11px;
+      }
+
+      .day-temps {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 5px;
+      }
+
+      .day-temps .t-sep {
+        display: inline;
+        color: var(--muted);
       }
     }
 
@@ -887,7 +1279,11 @@
         grid-template-columns: 1fr;
       }
 
-      .metric-grid {
+      .condition-menu {
+        width: min(330px, calc(100vw - 18px));
+      }
+
+      .condition-switcher {
         grid-template-columns: 1fr;
       }
 
@@ -921,12 +1317,13 @@
       }
 
       .timeline-strip {
-        grid-auto-columns: minmax(104px, 42vw);
+        grid-auto-columns: clamp(160px, 46vw, 220px);
+        -webkit-overflow-scrolling: touch;
       }
     }
   </style>
 </head>
-<body>
+<body class="light-mode" data-weather="clear">
   <main class="page">
     <header class="app-header">
       <div class="brand-bar">
@@ -953,6 +1350,21 @@
         <div class="header-actions">
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to bright theme" title="Switch to bright theme">☀</button>
           <button class="refresh-button" id="refreshButton" type="button">↻ Refresh</button>
+          <div class="condition-menu-wrap">
+            <button class="menu-toggle" id="conditionMenuToggle" type="button" aria-label="Open weather theme menu" aria-expanded="false" aria-controls="conditionMenu">&#9776;</button>
+            <div class="condition-menu" id="conditionMenu" hidden>
+              <div class="condition-switcher" aria-label="Preview today's condition">
+                <span class="condition-switcher-label">Today is</span>
+                <button class="condition-chip is-active" type="button" data-preview-weather="live" aria-pressed="true">Live</button>
+                <button class="condition-chip" type="button" data-preview-weather="clear" aria-pressed="false">&#9728;&#65039; Clear</button>
+                <button class="condition-chip" type="button" data-preview-weather="fair" aria-pressed="false">&#127780;&#65039; Partly cloudy</button>
+                <button class="condition-chip" type="button" data-preview-weather="cloud" aria-pressed="false">&#9729;&#65039; Overcast</button>
+                <button class="condition-chip" type="button" data-preview-weather="rain" aria-pressed="false">&#127783;&#65039; Rain</button>
+                <button class="condition-chip" type="button" data-preview-weather="snow" aria-pressed="false">&#10052;&#65039; Snow</button>
+                <button class="condition-chip" type="button" data-preview-weather="storm" aria-pressed="false">&#9928;&#65039; Storm</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -1025,6 +1437,14 @@
     const RECENT_KEY = "weather-calendar-recent";
     const FORECAST_ENDPOINT = "https://api.open-meteo.com/v1/forecast";
     const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
+    const PREVIEW_CONDITIONS = {
+      clear: { code: 0 },
+      fair: { code: 2 },
+      cloud: { code: 3 },
+      rain: { code: 63 },
+      snow: { code: 75 },
+      storm: { code: 95 }
+    };
 
     const weatherCodes = {
       0: ["Clear sky", "☀️"],
@@ -1059,6 +1479,7 @@
 
     const els = {
       brandName: document.querySelector("#brandName"),
+      brandMark: document.querySelector(".brand-mark"),
       locationSummary: document.querySelector("#locationSummary"),
       cityInput: document.querySelector("#cityInput"),
       searchButton: document.querySelector("#searchButton"),
@@ -1077,7 +1498,10 @@
       calendarGrid: document.querySelector("#calendarGrid"),
       timelineMeta: document.querySelector("#timelineMeta"),
       timelineStrip: document.querySelector("#timelineStrip"),
-      timelineDetail: document.querySelector("#timelineDetail")
+      timelineDetail: document.querySelector("#timelineDetail"),
+      conditionMenuToggle: document.querySelector("#conditionMenuToggle"),
+      conditionMenu: document.querySelector("#conditionMenu"),
+      conditionChips: document.querySelectorAll("[data-preview-weather]")
     };
 
     let locationState = readSavedLocation();
@@ -1086,11 +1510,13 @@
     let searchTimer = null;
     let activeView = "calendar";
     let selectedTimelineKey = null;
+    let previewWeatherKey = null;
 
     init();
 
     function init() {
       setupTheme();
+      setupConditionPreview();
       els.cityInput.value = locationState.name;
       setBrand();
       bindEvents();
@@ -1100,28 +1526,92 @@
     }
 
     function setupTheme() {
-      const THEME_KEY = "weather-calendar-theme";
       const toggle = document.getElementById("themeToggle");
 
-      applyTheme(localStorage.getItem(THEME_KEY) === "light");
+      setThemeMode(true);
 
       toggle.addEventListener("click", () => {
-        const isLight = document.body.classList.toggle("light-mode");
-        localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
-        updateToggle(isLight);
+        setThemeMode(!document.body.classList.contains("light-mode"));
+      });
+    }
+
+    function setThemeMode(isLight) {
+      document.body.classList.toggle("light-mode", isLight);
+      updateThemeToggle(isLight);
+    }
+
+    function updateThemeToggle(isLight) {
+      const toggle = document.getElementById("themeToggle");
+      toggle.textContent = isLight ? "\u263e" : "\u2600";
+      const label = isLight ? "Switch to dark theme" : "Switch to bright theme";
+      toggle.setAttribute("aria-label", label);
+      toggle.setAttribute("title", label);
+    }
+
+    function setupConditionPreview() {
+      els.conditionMenuToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleConditionMenu();
       });
 
-      function applyTheme(isLight) {
-        document.body.classList.toggle("light-mode", isLight);
-        updateToggle(isLight);
+      els.conditionChips.forEach((button) => {
+        button.addEventListener("click", () => {
+          setConditionPreview(button.dataset.previewWeather);
+          closeConditionMenu();
+        });
+      });
+      updateConditionChips("live");
+    }
+
+    function toggleConditionMenu(forceOpen) {
+      const isOpen = typeof forceOpen === "boolean" ? forceOpen : els.conditionMenu.hidden;
+      els.conditionMenu.hidden = !isOpen;
+      els.conditionMenuToggle.classList.toggle("is-open", isOpen);
+      els.conditionMenuToggle.setAttribute("aria-expanded", String(isOpen));
+      els.conditionMenuToggle.setAttribute("aria-label", isOpen ? "Close weather theme menu" : "Open weather theme menu");
+    }
+
+    function closeConditionMenu() {
+      toggleConditionMenu(false);
+    }
+
+    function setConditionPreview(key) {
+      if (key === "live") {
+        previewWeatherKey = null;
+        applyWeatherTheme(getTodayForecastDay());
+        return;
       }
 
-      function updateToggle(isLight) {
-        toggle.textContent = isLight ? "☾" : "☀";
-        const label = isLight ? "Switch to dark theme" : "Switch to bright theme";
-        toggle.setAttribute("aria-label", label);
-        toggle.setAttribute("title", label);
-      }
+      previewWeatherKey = PREVIEW_CONDITIONS[key] ? key : "clear";
+      setThemeMode(true);
+      applyWeatherPreview(previewWeatherKey);
+    }
+
+    function applyWeatherPreview(key) {
+      const bucket = PREVIEW_CONDITIONS[key] ? key : "clear";
+      const condition = PREVIEW_CONDITIONS[bucket];
+      const [, icon] = weatherCodes[condition.code] || weatherCodes[0];
+
+      document.body.dataset.weather = bucket;
+      els.brandMark.textContent = icon;
+      updateConditionChips(bucket);
+    }
+
+    function updateConditionChips(activeKey) {
+      els.conditionChips.forEach((button) => {
+        const isActive = button.dataset.previewWeather === activeKey;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+      });
+    }
+
+    function getTodayForecastDay() {
+      if (!forecastState) return null;
+
+      const timezone = forecastState.timezone || locationState.timezone || DEFAULT_LOCATION.timezone;
+      const todayParts = getDatePartsInTimeZone(new Date(), timezone);
+      const todayKey = toDateKey(todayParts.year, todayParts.month, todayParts.day);
+      return forecastState.byDate.get(todayKey);
     }
 
     function bindEvents() {
@@ -1140,6 +1630,16 @@
       document.addEventListener("click", (event) => {
         if (!event.target.closest(".search-wrap")) {
           hideSuggestions();
+        }
+        if (!event.target.closest(".condition-menu-wrap")) {
+          closeConditionMenu();
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          hideSuggestions();
+          closeConditionMenu();
+          els.conditionMenuToggle.blur();
         }
       });
       els.viewButtons.forEach((button) => {
@@ -1275,6 +1775,7 @@
       els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone}`;
       setBrand();
       startClock(timezone);
+      applyWeatherTheme(forecastState.byDate.get(todayKey));
       renderFeatureCard(els.todayCard, "Today", todayKey, forecastState.byDate.get(todayKey));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", tomorrowKey, forecastState.byDate.get(tomorrowKey));
       const dayAfterKey = addDays(todayKey, 2);
@@ -1358,7 +1859,7 @@
               <span class="day-icon" aria-hidden="true">${icon}</span>
             </div>
             <div class="day-label">${weatherLabel}</div>
-            <div class="day-temps">${formatTemperature(day.max)} / ${formatTemperature(day.min)}</div>
+            <div class="day-temps"><span class="t-hi">${formatTemperature(day.max)}</span><span class="t-sep">/</span><span class="t-lo">${formatTemperature(day.min)}</span></div>
             <div class="day-details">
               <span>${formatPercent(day.rainProbability)} rain</span>
               <span>${formatMillimeters(day.precipitation)}</span>
@@ -1496,6 +1997,7 @@
       const timezone = locationState.timezone || DEFAULT_LOCATION.timezone;
       const todayParts = getDatePartsInTimeZone(new Date(), timezone);
       forecastState = { timezone, byDate: new Map(), startDate: null, endDate: null };
+      applyWeatherTheme(null);
       renderFeatureCard(els.todayCard, "Today", toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 1));
       renderFeatureCard(els.dayAfterCard, formatCompactWeekday(addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2)), addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2));
@@ -1627,6 +2129,36 @@
 
     function setBrand() {
       els.brandName.textContent = (locationState.name || "Weather").toUpperCase();
+    }
+
+    // Re-skin the UI to match today's conditions. Preview chips can temporarily
+    // override the live forecast bucket for visual QA.
+    function applyWeatherTheme(day) {
+      if (previewWeatherKey) {
+        applyWeatherPreview(previewWeatherKey);
+        return;
+      }
+
+      if (!day || !Number.isFinite(day.code)) {
+        delete document.body.dataset.weather;
+        els.brandMark.textContent = weatherCodes[0][1];
+        updateConditionChips("live");
+        return;
+      }
+      const [, icon] = weatherCodes[day.code] || weatherCodes[0];
+      document.body.dataset.weather = weatherBucket(day.code);
+      els.brandMark.textContent = icon;
+      updateConditionChips("live");
+    }
+
+    function weatherBucket(code) {
+      if (code === 0 || code === 1) return "clear";
+      if (code === 2) return "fair";
+      if (code === 3 || code === 45 || code === 48) return "cloud";
+      if ((code >= 71 && code <= 77) || code === 85 || code === 86) return "snow";
+      if (code >= 95) return "storm";
+      if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return "rain";
+      return "cloud";
     }
 
     let clockTimer = null;
