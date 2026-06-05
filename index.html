@@ -218,10 +218,13 @@
     }
 
     .status {
-      min-height: 32px;
       margin: 0 0 14px;
       color: var(--muted);
       font-weight: 700;
+    }
+
+    .status:empty {
+      display: none;
     }
 
     .status.error {
@@ -603,6 +606,54 @@
       line-height: 1;
     }
 
+    .recent-cities {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .recent-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .recent-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .recent-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: var(--r-pill);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 140ms ease, border-color 140ms ease;
+    }
+
+    .recent-chip:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent-soft-border);
+    }
+
+    .recent-chip-flag {
+      font-size: 0.9rem;
+    }
+
     .empty-state {
       padding: 18px;
       color: var(--muted);
@@ -637,7 +688,7 @@
       }
 
       .feature-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .calendar-header {
@@ -736,7 +787,13 @@
     <section class="feature-grid" aria-label="Featured forecast cards">
       <article class="forecast-card" id="todayCard"></article>
       <article class="forecast-card tomorrow" id="tomorrowCard"></article>
+      <article class="forecast-card tomorrow" id="dayAfterCard"></article>
     </section>
+
+    <div class="recent-cities" id="recentCities" hidden>
+      <span class="recent-label">Recent</span>
+      <div class="recent-chips" id="recentChips"></div>
+    </div>
 
     <section class="calendar-panel view-panel" id="calendarPanel" data-view-panel="calendar" aria-label="Monthly weather calendar">
       <div class="calendar-header">
@@ -744,7 +801,7 @@
           <div class="month-note">Calendar</div>
           <h2 id="monthTitle">Month</h2>
         </div>
-        <div class="calendar-meta" id="calendarMeta">Forecast range unavailable</div>
+        <div class="calendar-meta" id="calendarMeta" hidden>Forecast range unavailable</div>
       </div>
       <div class="weekday-grid" aria-hidden="true">
         <div class="weekday">Sun</div>
@@ -785,6 +842,7 @@
 
     const FORECAST_DAYS = 16;
     const STORAGE_KEY = "weather-calendar-location";
+    const RECENT_KEY = "weather-calendar-recent";
     const FORECAST_ENDPOINT = "https://api.open-meteo.com/v1/forecast";
     const GEOCODING_ENDPOINT = "https://geocoding-api.open-meteo.com/v1/search";
 
@@ -829,6 +887,9 @@
       status: document.querySelector("#status"),
       todayCard: document.querySelector("#todayCard"),
       tomorrowCard: document.querySelector("#tomorrowCard"),
+      dayAfterCard: document.querySelector("#dayAfterCard"),
+      recentCities: document.querySelector("#recentCities"),
+      recentChips: document.querySelector("#recentChips"),
       viewButtons: document.querySelectorAll(".view-button"),
       viewPanels: document.querySelectorAll(".view-panel"),
       monthTitle: document.querySelector("#monthTitle"),
@@ -852,6 +913,7 @@
       els.cityInput.value = locationState.name;
       setBrand();
       bindEvents();
+      renderRecentCities();
       renderLoading();
       loadForecast();
     }
@@ -907,6 +969,38 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
     }
 
+    function saveRecentCity(location) {
+      let recents = readRecentCities();
+      recents = recents.filter((r) => r.name !== location.name || r.country !== location.country);
+      recents.unshift({ name: location.name, country: location.country, admin1: location.admin1, latitude: location.latitude, longitude: location.longitude, timezone: location.timezone });
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recents.slice(0, 5)));
+    }
+
+    function readRecentCities() {
+      try {
+        return JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function renderRecentCities() {
+      const recents = readRecentCities().filter((r) => r.name !== locationState.name || r.country !== locationState.country);
+      els.recentCities.hidden = recents.length === 0;
+      els.recentChips.innerHTML = recents.map((r, i) => `
+        <button class="recent-chip" type="button" data-index="${i}" aria-label="Load ${escapeHtml(r.name)}, ${escapeHtml(r.country)}">
+          <span>${escapeHtml(r.name)}</span>
+          <span style="color:var(--muted);font-size:0.78rem">${escapeHtml(r.country)}</span>
+        </button>
+      `).join("");
+      els.recentChips.querySelectorAll(".recent-chip").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const city = recents[Number(btn.dataset.index)];
+          selectLocation(city);
+        });
+      });
+    }
+
     async function loadForecast() {
       setBusy(true);
       setStatus(`Loading forecast for ${formatLocation(locationState)}...`);
@@ -933,7 +1027,7 @@
 
         forecastState = normalizeForecast(forecast);
         renderApp();
-        setStatus(`Showing ${FORECAST_DAYS} available forecast days. Dates outside that range are left empty.`);
+        setStatus("");
       } catch (error) {
         console.error(error);
         setStatus("Could not load the forecast. Please try refreshing or search for another city.", true);
@@ -974,8 +1068,11 @@
 
       els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone}`;
       setBrand();
+      startClock(timezone);
       renderFeatureCard(els.todayCard, "Today", todayKey, forecastState.byDate.get(todayKey));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", tomorrowKey, forecastState.byDate.get(tomorrowKey));
+      const dayAfterKey = addDays(todayKey, 2);
+      renderFeatureCard(els.dayAfterCard, formatCompactWeekday(dayAfterKey), dayAfterKey, forecastState.byDate.get(dayAfterKey));
       renderCalendar(todayKey);
       renderTimeline(todayKey);
       setActiveView(activeView);
@@ -1068,7 +1165,6 @@
             <div class="day-top">
               <span class="day-number">${dayNumber}</span>
             </div>
-            <div class="empty-copy">No forecast yet</div>
           `;
         }
 
@@ -1181,6 +1277,7 @@
     function renderLoading() {
       els.todayCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.tomorrowCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
+      els.dayAfterCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.monthTitle.textContent = "Loading";
       els.calendarMeta.textContent = "Fetching daily forecast";
       els.calendarGrid.innerHTML = Array.from({ length: 35 }, () => `<div class="day-cell is-empty"><div class="loading-skeleton" style="height: 72px; border-radius: 8px;"></div></div>`).join("");
@@ -1195,6 +1292,7 @@
       forecastState = { timezone, byDate: new Map(), startDate: null, endDate: null };
       renderFeatureCard(els.todayCard, "Today", toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 1));
+      renderFeatureCard(els.dayAfterCard, formatCompactWeekday(addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2)), addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2));
       renderCalendar(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderTimeline(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       els.calendarMeta.textContent = "Forecast unavailable";
@@ -1299,8 +1397,10 @@
         timezone: result.timezone || DEFAULT_LOCATION.timezone
       };
       saveLocation(locationState);
+      saveRecentCity(locationState);
       els.cityInput.value = locationState.name;
       setBrand();
+      renderRecentCities();
       searchResults = [];
       hideSuggestions();
       renderLoading();
@@ -1321,6 +1421,23 @@
 
     function setBrand() {
       els.brandName.textContent = (locationState.name || "Weather").toUpperCase();
+    }
+
+    let clockTimer = null;
+
+    function startClock(timezone) {
+      if (clockTimer) clearInterval(clockTimer);
+      function tick() {
+        const time = new Date().toLocaleTimeString("en-US", {
+          timeZone: timezone,
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        });
+        els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone} · ${time}`;
+      }
+      tick();
+      clockTimer = setInterval(tick, 1000);
     }
 
     function setStatus(message, isError = false) {
