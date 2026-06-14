@@ -690,6 +690,291 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    .rain-panel {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-lg);
+      background:
+        linear-gradient(115deg, rgba(24, 127, 176, 0.12), transparent 48%),
+        var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .rain-panel::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      top: -120px;
+      right: -40px;
+      border-radius: 50%;
+      background: rgba(24, 127, 176, 0.13);
+      filter: blur(24px);
+      pointer-events: none;
+    }
+
+    .rain-panel-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px 14px;
+    }
+
+    .rain-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rain-drop {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      border-radius: 65% 35% 62% 38%;
+      background: #189bd1;
+      box-shadow: 0 0 20px rgba(24, 155, 209, 0.42);
+      transform: rotate(-45deg);
+    }
+
+    .rain-panel h2 {
+      margin: 2px 0 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 3vw, 1.35rem);
+      letter-spacing: -0.03em;
+    }
+
+    .rain-summary {
+      min-width: min(100%, 240px);
+      text-align: right;
+    }
+
+    .rain-summary strong,
+    .rain-summary span {
+      display: block;
+    }
+
+    .rain-summary strong {
+      color: var(--text-primary);
+      font-size: 0.92rem;
+    }
+
+    .rain-summary span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .rain-chart-scroll {
+      position: relative;
+      z-index: 1;
+      overflow-x: auto;
+      padding: 10px 12px 8px;
+      border-top: 1px solid var(--glass-border);
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+    }
+
+    .rain-chart {
+      display: block;
+      width: 100%;
+      min-width: 680px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .rain-chart-grid {
+      stroke: rgba(91, 132, 160, 0.2);
+      stroke-width: 1;
+      stroke-dasharray: 3 5;
+    }
+
+    .rain-chart-axis {
+      fill: var(--muted);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .rain-chart-unit {
+      fill: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .rain-chart-area {
+      fill: url("#rainAreaGradient");
+    }
+
+    .rain-water-motion {
+      clip-path: url("#rainAreaClip");
+      pointer-events: none;
+    }
+
+    .rain-water-sheen {
+      fill: url("#rainSheenGradient");
+      opacity: 0.55;
+      animation: waterSheenDrift 5.5s ease-in-out infinite alternate;
+    }
+
+    .rain-drop-streak {
+      fill: none;
+      stroke: rgba(178, 239, 255, 0.9);
+      stroke-width: 2;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 3px rgba(34, 184, 240, 0.65));
+      opacity: 0;
+      animation: rainDropDive var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .rain-splash-ring,
+    .rain-splash-crown {
+      fill: none;
+      stroke: rgba(184, 242, 255, 0.88);
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: rainSplashBloom var(--duration) ease-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .rain-splash-crown {
+      animation-name: rainSplashCrown;
+    }
+
+    .rain-chart-line {
+      fill: none;
+      stroke: #22b8f0;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 5px rgba(34, 184, 240, 0.38));
+      animation: chartReveal 700ms ease-out both;
+    }
+
+    .rain-chart-point circle {
+      fill: #22b8f0;
+      stroke: rgba(218, 247, 255, 0.9);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 5px rgba(34, 184, 240, 0.65));
+      transition: r 140ms ease;
+    }
+
+    .rain-chart-point:hover circle {
+      r: 6;
+    }
+
+    .rain-chart-value {
+      fill: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 800;
+      paint-order: stroke;
+      stroke: var(--panel-solid);
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .rain-chart-time {
+      fill: var(--muted);
+      font-family: var(--font-display);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    @keyframes chartReveal {
+      from {
+        opacity: 0;
+        stroke-dasharray: 900;
+        stroke-dashoffset: 900;
+      }
+      to {
+        opacity: 1;
+        stroke-dasharray: 900;
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes waterSheenDrift {
+      from {
+        transform: translateX(-90px);
+        opacity: 0.32;
+      }
+      to {
+        transform: translateX(80px);
+        opacity: 0.62;
+      }
+    }
+
+    @keyframes rainDropDive {
+      0%, 12% {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+      20% {
+        opacity: 0.85;
+      }
+      48% {
+        opacity: 0.7;
+        transform: translateY(24px);
+      }
+      52%, 100% {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+    }
+
+    @keyframes rainSplashBloom {
+      0%, 46% {
+        opacity: 0;
+        transform: scale(0.25);
+      }
+      52% {
+        opacity: 0.75;
+      }
+      72% {
+        opacity: 0;
+        transform: scale(1.8);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.8);
+      }
+    }
+
+    @keyframes rainSplashCrown {
+      0%, 44% {
+        opacity: 0;
+        transform: translateY(4px) scale(0.45);
+      }
+      51% {
+        opacity: 0.8;
+      }
+      68% {
+        opacity: 0;
+        transform: translateY(-4px) scale(1.35);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-4px) scale(1.35);
+      }
+    }
+
     .forecast-card {
       position: relative;
       overflow: hidden;
@@ -1097,6 +1382,10 @@
       margin-bottom: 18px;
     }
 
+    .app-header .recent-cities {
+      margin: -6px 0 0;
+    }
+
     .recent-label {
       color: var(--muted);
       font-family: var(--font-body);
@@ -1249,6 +1538,14 @@
         scroll-snap-type: none;
       }
 
+      .rain-chart-scroll {
+        padding-inline: 18px;
+      }
+
+      .rain-chart {
+        min-width: 0;
+      }
+
       .calendar-header {
         padding: 20px 22px;
       }
@@ -1277,6 +1574,11 @@
 
       .search-row {
         grid-template-columns: 1fr;
+      }
+
+      .rain-summary {
+        width: 100%;
+        text-align: left;
       }
 
       .condition-menu {
@@ -1342,6 +1644,11 @@
         </section>
       </div>
 
+      <div class="recent-cities" id="recentCities" hidden>
+        <span class="recent-label">Recent</span>
+        <div class="recent-chips" id="recentChips"></div>
+      </div>
+
       <div class="title-row">
         <div class="title-block">
           <h1>30-Day Weather Calendar</h1>
@@ -1382,10 +1689,22 @@
       <article class="forecast-card tomorrow" id="dayAfterCard"></article>
     </section>
 
-    <div class="recent-cities" id="recentCities" hidden>
-      <span class="recent-label">Recent</span>
-      <div class="recent-chips" id="recentChips"></div>
-    </div>
+    <section class="rain-panel" aria-labelledby="rainWatchTitle">
+      <div class="rain-panel-header">
+        <div class="rain-title">
+          <span class="rain-drop" aria-hidden="true"></span>
+          <div>
+            <div class="month-note">Next 8 hours</div>
+            <h2 id="rainWatchTitle">Rain Watch</h2>
+          </div>
+        </div>
+        <div class="rain-summary" aria-live="polite">
+          <strong id="rainSummary">Loading rainfall outlook...</strong>
+          <span id="rainDetail">Checking hourly forecast</span>
+        </div>
+      </div>
+      <div class="rain-chart-scroll" id="rainStrip" aria-label="Hourly rainfall forecast"></div>
+    </section>
 
     <section class="calendar-panel view-panel" id="calendarPanel" data-view-panel="calendar" aria-label="Monthly weather calendar">
       <div class="calendar-header">
@@ -1489,6 +1808,9 @@
       todayCard: document.querySelector("#todayCard"),
       tomorrowCard: document.querySelector("#tomorrowCard"),
       dayAfterCard: document.querySelector("#dayAfterCard"),
+      rainSummary: document.querySelector("#rainSummary"),
+      rainDetail: document.querySelector("#rainDetail"),
+      rainStrip: document.querySelector("#rainStrip"),
       recentCities: document.querySelector("#recentCities"),
       recentChips: document.querySelector("#recentChips"),
       viewButtons: document.querySelectorAll(".view-button"),
@@ -1717,6 +2039,7 @@
           latitude: locationState.latitude,
           longitude: locationState.longitude,
           daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,weather_code,wind_speed_10m_max",
+          hourly: "precipitation_probability,rain,showers",
           timezone: locationState.timezone || DEFAULT_LOCATION.timezone,
           forecast_days: FORECAST_DAYS
         });
@@ -1745,6 +2068,7 @@
 
     function normalizeForecast(forecast) {
       const daily = forecast.daily;
+      const hourly = forecast.hourly;
       const byDate = new Map();
       daily.time.forEach((dateKey, index) => {
         byDate.set(dateKey, {
@@ -1758,9 +2082,24 @@
         });
       });
 
+      const hourlyRain = Array.isArray(hourly?.time)
+        ? hourly.time.map((timeKey, index) => {
+            const amounts = [hourly.rain?.[index], hourly.showers?.[index]];
+            const hasAmount = amounts.some(Number.isFinite);
+            return {
+              timeKey,
+              probability: hourly.precipitation_probability?.[index],
+              amount: hasAmount
+                ? amounts.reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0)
+                : null
+            };
+          })
+        : [];
+
       return {
         timezone: forecast.timezone || locationState.timezone || DEFAULT_LOCATION.timezone,
         byDate,
+        hourlyRain,
         startDate: daily.time[0],
         endDate: daily.time[daily.time.length - 1]
       };
@@ -1780,6 +2119,7 @@
       renderFeatureCard(els.tomorrowCard, "Tomorrow", tomorrowKey, forecastState.byDate.get(tomorrowKey));
       const dayAfterKey = addDays(todayKey, 2);
       renderFeatureCard(els.dayAfterCard, formatCompactWeekday(dayAfterKey), dayAfterKey, forecastState.byDate.get(dayAfterKey));
+      renderRainWatch();
       renderCalendar(todayKey);
       renderTimeline(todayKey);
       setActiveView(activeView);
@@ -1821,6 +2161,154 @@
           <div class="metric"><span>Wind</span><strong>${formatWind(day.wind)}</strong></div>
         </div>
       `;
+    }
+
+    function renderRainWatch() {
+      const hourlyRain = forecastState?.hourlyRain || [];
+      const nowParts = getDateTimePartsInTimeZone(new Date(), forecastState?.timezone || DEFAULT_LOCATION.timezone);
+      const currentHourKey = `${toDateKey(nowParts.year, nowParts.month, nowParts.day)}T${String(nowParts.hour).padStart(2, "0")}:00`;
+      const startIndex = hourlyRain.findIndex((hour) => hour.timeKey >= currentHourKey);
+      const hours = startIndex >= 0 ? hourlyRain.slice(startIndex, startIndex + 8) : [];
+
+      if (!hours.length) {
+        els.rainSummary.textContent = "Hourly rainfall unavailable";
+        els.rainDetail.textContent = "Try refreshing the forecast";
+        els.rainStrip.innerHTML = `<div class="empty-state">No hourly data available.</div>`;
+        return;
+      }
+
+      const probabilities = hours.map((hour) => hour.probability).filter(Number.isFinite);
+      const maxProbability = probabilities.length ? Math.max(...probabilities) : 0;
+      const totalRain = hours.reduce((total, hour) => total + (Number.isFinite(hour.amount) ? hour.amount : 0), 0);
+      const firstRainIndex = hours.findIndex((hour) => hour.amount >= 0.1 || hour.probability >= 40);
+
+      if (firstRainIndex === 0) {
+        els.rainSummary.textContent = "Rain is possible now";
+      } else if (firstRainIndex > 0) {
+        els.rainSummary.textContent = `Rain may begin around ${formatHourLabel(hours[firstRainIndex].timeKey, hours[0].timeKey)}`;
+      } else {
+        els.rainSummary.textContent = "Dry for the next 8 hours";
+      }
+      els.rainDetail.textContent = `${Math.round(maxProbability)}% peak chance | ${formatMillimeters(totalRain)} expected`;
+
+      const chartWidth = 800;
+      const chartHeight = 230;
+      const plotLeft = 48;
+      const plotRight = 20;
+      const plotTop = 42;
+      const plotBottom = 172;
+      const plotWidth = chartWidth - plotLeft - plotRight;
+      const plotHeight = plotBottom - plotTop;
+      const amounts = hours.map((hour) => Number.isFinite(hour.amount) ? hour.amount : 0);
+      const chartMaximum = getRainChartMaximum(Math.max(...amounts));
+      const points = amounts.map((amount, index) => ({
+        amount,
+        x: plotLeft + (plotWidth * index) / Math.max(hours.length - 1, 1),
+        y: plotBottom - (amount / chartMaximum) * plotHeight
+      }));
+      const linePath = createSmoothChartPath(points);
+      const areaPath = `${linePath} L ${points.at(-1).x} ${plotBottom} L ${points[0].x} ${plotBottom} Z`;
+      const ticks = Array.from({ length: 4 }, (_, index) => chartMaximum * index / 3);
+      const splashParticles = Array.from({ length: 9 }, (_, index) => {
+        const x = plotLeft + 32 + ((plotWidth - 64) * index) / 8;
+        const surfaceY = getChartSurfaceY(points, x);
+        const splashY = Math.min(plotBottom - 8, surfaceY + 20 + (index % 3) * 9);
+        return {
+          x,
+          dropTop: surfaceY + 3,
+          splashY,
+          delay: `${(-index * 0.37).toFixed(2)}s`,
+          duration: `${(1.85 + (index % 4) * 0.22).toFixed(2)}s`
+        };
+      });
+
+      els.rainStrip.innerHTML = `
+        <svg class="rain-chart" viewBox="0 0 ${chartWidth} ${chartHeight}" role="img" aria-label="Hourly rainfall in millimeters for the next eight hours">
+          <defs>
+            <linearGradient id="rainAreaGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#22b8f0" stop-opacity="0.42"></stop>
+              <stop offset="100%" stop-color="#22b8f0" stop-opacity="0.02"></stop>
+            </linearGradient>
+            <linearGradient id="rainSheenGradient" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#b8f2ff" stop-opacity="0"></stop>
+              <stop offset="45%" stop-color="#b8f2ff" stop-opacity="0.34"></stop>
+              <stop offset="58%" stop-color="#72dcff" stop-opacity="0.08"></stop>
+              <stop offset="100%" stop-color="#72dcff" stop-opacity="0"></stop>
+            </linearGradient>
+            <clipPath id="rainAreaClip">
+              <path d="${areaPath}"></path>
+            </clipPath>
+          </defs>
+          <text class="rain-chart-unit" x="${plotLeft}" y="18">Rainfall (mm)</text>
+          ${ticks.map((tick) => {
+            const y = plotBottom - (tick / chartMaximum) * plotHeight;
+            return `
+              <line class="rain-chart-grid" x1="${plotLeft}" y1="${y}" x2="${chartWidth - plotRight}" y2="${y}"></line>
+              <text class="rain-chart-axis" x="${plotLeft - 9}" y="${y + 3}" text-anchor="end">${formatChartValue(tick)}</text>
+            `;
+          }).join("")}
+          <path class="rain-chart-area" d="${areaPath}"></path>
+          <g class="rain-water-motion" aria-hidden="true">
+            <rect class="rain-water-sheen" x="${plotLeft - 100}" y="${plotTop}" width="${plotWidth + 200}" height="${plotHeight}"></rect>
+            ${splashParticles.map((particle) => `
+              <g style="--delay:${particle.delay};--duration:${particle.duration}">
+                <path class="rain-drop-streak" d="M ${particle.x + 5} ${particle.dropTop} l -5 14"></path>
+                <ellipse class="rain-splash-ring" cx="${particle.x}" cy="${particle.splashY}" rx="7" ry="2.4"></ellipse>
+                <path class="rain-splash-crown" d="M ${particle.x - 7} ${particle.splashY} Q ${particle.x - 4} ${particle.splashY - 7}, ${particle.x} ${particle.splashY} Q ${particle.x + 4} ${particle.splashY - 7}, ${particle.x + 7} ${particle.splashY}"></path>
+              </g>
+            `).join("")}
+          </g>
+          <path class="rain-chart-line" d="${linePath}"></path>
+          ${points.map((point, index) => {
+            const timeLabel = index === 0 ? "Now" : formatHourLabel(hours[index].timeKey, hours[0].timeKey);
+            const probability = Number.isFinite(hours[index].probability) ? Math.round(hours[index].probability) : 0;
+            const labelY = Math.max(plotTop - 5, point.y - 11);
+            return `
+              <g class="rain-chart-point">
+                <title>${timeLabel}: ${formatMillimeters(point.amount)}, ${probability}% chance</title>
+                <circle cx="${point.x}" cy="${point.y}" r="4"></circle>
+                <text class="rain-chart-value" x="${point.x}" y="${labelY}" text-anchor="middle">${formatChartValue(point.amount)}</text>
+                <text class="rain-chart-time" x="${point.x}" y="${plotBottom + 28}" text-anchor="middle">${escapeHtml(timeLabel)}</text>
+              </g>
+            `;
+          }).join("")}
+        </svg>
+      `;
+    }
+
+    function getChartSurfaceY(points, x) {
+      const segmentIndex = points.findIndex((point) => point.x >= x);
+      if (segmentIndex <= 0) return points[0]?.y || 0;
+      if (segmentIndex === -1) return points.at(-1)?.y || 0;
+
+      const start = points[segmentIndex - 1];
+      const end = points[segmentIndex];
+      const progress = (x - start.x) / Math.max(end.x - start.x, 1);
+      return start.y + (end.y - start.y) * progress;
+    }
+
+    function getRainChartMaximum(maximum) {
+      if (!Number.isFinite(maximum) || maximum <= 0) return 1;
+      const roughStep = maximum / 3;
+      const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+      const normalizedStep = roughStep / magnitude;
+      const niceFactor = normalizedStep <= 1 ? 1 : normalizedStep <= 2 ? 2 : normalizedStep <= 5 ? 5 : 10;
+      return niceFactor * magnitude * 3;
+    }
+
+    function createSmoothChartPath(points) {
+      if (!points.length) return "";
+      if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+
+      return points.slice(1).reduce((path, point, index) => {
+        const previous = points[index];
+        const controlX = (previous.x + point.x) / 2;
+        return `${path} C ${controlX} ${previous.y}, ${controlX} ${point.y}, ${point.x} ${point.y}`;
+      }, `M ${points[0].x} ${points[0].y}`);
+    }
+
+    function formatChartValue(value) {
+      return value >= 10 || Number.isInteger(value) ? String(Math.round(value)) : value.toFixed(1);
     }
 
     function renderCalendar(todayKey) {
@@ -1985,6 +2473,9 @@
       els.todayCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.tomorrowCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.dayAfterCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
+      els.rainSummary.textContent = "Loading rainfall outlook...";
+      els.rainDetail.textContent = "Checking hourly forecast";
+      els.rainStrip.innerHTML = `<div class="loading-skeleton" style="height: 220px; min-width: 680px; border-radius: 10px;"></div>`;
       els.monthTitle.textContent = "Loading";
       els.calendarMeta.textContent = "Fetching daily forecast";
       els.calendarGrid.innerHTML = Array.from({ length: 35 }, () => `<div class="day-cell is-empty"><div class="loading-skeleton" style="height: 72px; border-radius: 8px;"></div></div>`).join("");
@@ -1996,11 +2487,12 @@
     function renderUnavailableShell() {
       const timezone = locationState.timezone || DEFAULT_LOCATION.timezone;
       const todayParts = getDatePartsInTimeZone(new Date(), timezone);
-      forecastState = { timezone, byDate: new Map(), startDate: null, endDate: null };
+      forecastState = { timezone, byDate: new Map(), hourlyRain: [], startDate: null, endDate: null };
       applyWeatherTheme(null);
       renderFeatureCard(els.todayCard, "Today", toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 1));
       renderFeatureCard(els.dayAfterCard, formatCompactWeekday(addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2)), addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 2));
+      renderRainWatch();
       renderCalendar(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderTimeline(toDateKey(todayParts.year, todayParts.month, todayParts.day));
       els.calendarMeta.textContent = "Forecast unavailable";
@@ -2198,6 +2690,24 @@
       };
     }
 
+    function getDateTimePartsInTimeZone(date, timezone) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        hourCycle: "h23"
+      }).formatToParts(date);
+      const partMap = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+      return {
+        year: Number(partMap.year),
+        month: Number(partMap.month),
+        day: Number(partMap.day),
+        hour: Number(partMap.hour)
+      };
+    }
+
     function toDateKey(year, month, day) {
       return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     }
@@ -2247,6 +2757,14 @@
         day: "numeric",
         timeZone: "UTC"
       });
+    }
+
+    function formatHourLabel(timeKey, referenceTimeKey) {
+      const hour = timeKey.slice(11, 13);
+      if (timeKey.slice(0, 10) === referenceTimeKey.slice(0, 10)) {
+        return `${hour}:00`;
+      }
+      return `${formatCompactWeekday(timeKey.slice(0, 10))} ${hour}`;
     }
 
     function formatRangeTitle(startKey, endKey) {
