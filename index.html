@@ -853,6 +853,94 @@
       opacity: 1;
     }
 
+    @media (max-width: 720px) {
+      body {
+        background-attachment: scroll;
+      }
+
+      body[data-weather="rain"]::after,
+      body[data-weather="storm"]::before,
+      body[data-weather="storm"]::after {
+        animation: none;
+        opacity: 0;
+      }
+
+      .weather-stage {
+        contain: layout paint style;
+      }
+
+      .weather-stage > * {
+        transition: none;
+      }
+
+      .weather-clouds {
+        height: min(32vh, 240px);
+        inset: -70px -32vw auto -32vw;
+      }
+
+      .weather-cloud {
+        width: clamp(240px, 62vw, 430px);
+        box-shadow:
+          inset 0 -18px 34px rgba(0, 0, 0, 0.2),
+          0 18px 42px rgba(0, 0, 0, 0.18);
+      }
+
+      .cloud-two {
+        top: 118px;
+      }
+
+      .cloud-three {
+        display: none;
+      }
+
+      .weather-rain {
+        transform: rotate(8deg) scale(1.04);
+      }
+
+      .weather-rain::before {
+        inset: -10%;
+        background-size: 128px 196px;
+        animation-duration: 1450ms;
+        opacity: 0.82;
+      }
+
+      .weather-rain::after {
+        display: none;
+      }
+
+      body[data-weather="rain"] .weather-stage > .weather-rain,
+      body[data-weather="storm"] .weather-stage > .weather-rain,
+      body.light-mode[data-weather="rain"] .weather-stage > .weather-rain,
+      body.light-mode[data-weather="storm"] .weather-stage > .weather-rain {
+        opacity: 0.24;
+      }
+
+      .weather-thunder {
+        background:
+          linear-gradient(180deg, rgba(3, 4, 9, 0.46), transparent 46%),
+          radial-gradient(circle at 58% 16%, rgba(146, 120, 255, 0.18), transparent 24%);
+        animation: none;
+      }
+
+      body[data-weather="storm"] .weather-stage > .weather-thunder,
+      body.light-mode[data-weather="storm"] .weather-stage > .weather-thunder {
+        opacity: 0.24;
+      }
+
+      .weather-lightning::before {
+        top: clamp(18px, 5vh, 54px);
+        left: 58vw;
+        width: clamp(48px, 14vw, 78px);
+        height: clamp(180px, 34vh, 280px);
+        filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.72));
+        animation-duration: 9s;
+      }
+
+      .weather-lightning::after {
+        display: none;
+      }
+    }
+
     button,
     input {
       font: inherit;
