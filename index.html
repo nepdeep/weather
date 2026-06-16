@@ -456,7 +456,7 @@
 
     .weather-sun {
       top: clamp(26px, 7vh, 78px);
-      right: clamp(18px, 8vw, 128px);
+      left: -180px;
       z-index: 1;
       width: clamp(96px, 13vw, 178px);
       aspect-ratio: 1;
@@ -491,12 +491,12 @@
 
     body[data-weather="clear"] .weather-sun {
       opacity: 0.94;
-      animation: sunVoyage 54s ease-in-out infinite alternate;
+      animation: sunVoyage 18s linear infinite;
     }
 
     body[data-weather="fair"] .weather-sun {
       opacity: 0.66;
-      animation: sunVoyage 62s ease-in-out infinite alternate;
+      animation: sunVoyage 21.5s linear infinite;
     }
 
     body.light-mode[data-weather="clear"] .weather-sun,
@@ -537,7 +537,7 @@
       --cloud-start: -3vw;
       --cloud-end: 8vw;
       --cloud-lift: 12px;
-      --cloud-duration: 42s;
+      --cloud-duration: 5.25s;
       position: absolute;
       display: block;
       width: clamp(260px, 36vw, 650px);
@@ -582,7 +582,7 @@
       --cloud-scale: 1.08;
       --cloud-start: -6vw;
       --cloud-end: 7vw;
-      --cloud-duration: 46s;
+      --cloud-duration: 5.75s;
     }
 
     .cloud-two {
@@ -592,7 +592,7 @@
       --cloud-start: 7vw;
       --cloud-end: -6vw;
       --cloud-lift: -10px;
-      --cloud-duration: 38s;
+      --cloud-duration: 4.75s;
       animation-direction: alternate-reverse;
     }
 
@@ -603,7 +603,7 @@
       --cloud-start: 5vw;
       --cloud-end: -8vw;
       --cloud-lift: 18px;
-      --cloud-duration: 54s;
+      --cloud-duration: 6.75s;
       opacity: 0.78;
     }
 
@@ -770,13 +770,13 @@
     body[data-weather="clear"] .weather-stage > .weather-sun {
       display: block;
       opacity: 0.94;
-      animation: sunVoyage 54s ease-in-out infinite alternate;
+      animation: sunVoyage 18s linear infinite;
     }
 
     body[data-weather="fair"] .weather-stage > .weather-sun {
       display: block;
       opacity: 0.66;
-      animation: sunVoyage 62s ease-in-out infinite alternate;
+      animation: sunVoyage 21.5s linear infinite;
     }
 
     body.light-mode[data-weather="clear"] .weather-stage > .weather-sun,
@@ -1340,10 +1340,12 @@
 
     .rain-drop-streak {
       fill: none;
-      stroke: rgba(178, 239, 255, 0.9);
-      stroke-width: 2;
+      stroke: rgba(255, 255, 255, 0.96);
+      stroke-width: 2.35;
       stroke-linecap: round;
-      filter: drop-shadow(0 0 3px rgba(34, 184, 240, 0.65));
+      filter:
+        drop-shadow(0 0 3px rgba(255, 255, 255, 0.72))
+        drop-shadow(0 0 6px rgba(34, 184, 240, 0.5));
       opacity: 0;
       animation: rainDropDive var(--duration) linear infinite;
       animation-delay: var(--delay);
@@ -1352,9 +1354,10 @@
     .rain-splash-ring,
     .rain-splash-crown {
       fill: none;
-      stroke: rgba(184, 242, 255, 0.88);
-      stroke-width: 1.4;
+      stroke: rgba(255, 255, 255, 0.9);
+      stroke-width: 1.65;
       stroke-linecap: round;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.45));
       opacity: 0;
       transform-box: fill-box;
       transform-origin: center;
@@ -1436,10 +1439,10 @@
         transform: translateY(-16px);
       }
       20% {
-        opacity: 0.85;
+        opacity: 0.98;
       }
       48% {
-        opacity: 0.7;
+        opacity: 0.84;
         transform: translateY(24px);
       }
       52%, 100% {
@@ -1454,7 +1457,7 @@
         transform: scale(0.25);
       }
       52% {
-        opacity: 0.75;
+        opacity: 0.88;
       }
       72% {
         opacity: 0;
@@ -1472,7 +1475,7 @@
         transform: translateY(4px) scale(0.45);
       }
       51% {
-        opacity: 0.8;
+        opacity: 0.92;
       }
       68% {
         opacity: 0;
@@ -1997,9 +2000,9 @@
     }
 
     @keyframes sunVoyage {
-      0% { transform: translate3d(-4vw, 3vh, 0) scale(0.96); }
-      45% { transform: translate3d(-1vw, 0, 0) scale(1.02); }
-      100% { transform: translate3d(3vw, 4vh, 0) scale(0.98); }
+      0% { transform: translate3d(0, 3vh, 0) scale(0.96); }
+      45% { transform: translate3d(calc(45vw + 150px), 0, 0) scale(1.02); }
+      100% { transform: translate3d(calc(100vw + 360px), 4vh, 0) scale(0.98); }
     }
 
     @keyframes sunSpin {
@@ -2789,16 +2792,17 @@
       const linePath = createSmoothChartPath(points);
       const areaPath = `${linePath} L ${points.at(-1).x} ${plotBottom} L ${points[0].x} ${plotBottom} Z`;
       const ticks = Array.from({ length: 4 }, (_, index) => chartMaximum * index / 3);
-      const splashParticles = Array.from({ length: 9 }, (_, index) => {
-        const x = plotLeft + 32 + ((plotWidth - 64) * index) / 8;
+      const splashParticleCount = 21;
+      const splashParticles = Array.from({ length: splashParticleCount }, (_, index) => {
+        const x = plotLeft + 24 + ((plotWidth - 48) * index) / (splashParticleCount - 1);
         const surfaceY = getChartSurfaceY(points, x);
-        const splashY = Math.min(plotBottom - 8, surfaceY + 20 + (index % 3) * 9);
+        const splashY = Math.min(plotBottom - 7, surfaceY + 14 + (index % 4) * 7);
         return {
           x,
-          dropTop: surfaceY + 3,
+          dropTop: surfaceY + 2,
           splashY,
-          delay: `${(-index * 0.37).toFixed(2)}s`,
-          duration: `${(1.85 + (index % 4) * 0.22).toFixed(2)}s`
+          delay: `${(-index * 0.19).toFixed(2)}s`,
+          duration: `${(1.55 + (index % 5) * 0.16).toFixed(2)}s`
         };
       });
 
@@ -2832,9 +2836,9 @@
             <rect class="rain-water-sheen" x="${plotLeft - 100}" y="${plotTop}" width="${plotWidth + 200}" height="${plotHeight}"></rect>
             ${splashParticles.map((particle) => `
               <g style="--delay:${particle.delay};--duration:${particle.duration}">
-                <path class="rain-drop-streak" d="M ${particle.x + 5} ${particle.dropTop} l -5 14"></path>
-                <ellipse class="rain-splash-ring" cx="${particle.x}" cy="${particle.splashY}" rx="7" ry="2.4"></ellipse>
-                <path class="rain-splash-crown" d="M ${particle.x - 7} ${particle.splashY} Q ${particle.x - 4} ${particle.splashY - 7}, ${particle.x} ${particle.splashY} Q ${particle.x + 4} ${particle.splashY - 7}, ${particle.x + 7} ${particle.splashY}"></path>
+                <path class="rain-drop-streak" d="M ${particle.x + 6} ${particle.dropTop} l -6 18"></path>
+                <ellipse class="rain-splash-ring" cx="${particle.x}" cy="${particle.splashY}" rx="8" ry="2.8"></ellipse>
+                <path class="rain-splash-crown" d="M ${particle.x - 8} ${particle.splashY} Q ${particle.x - 4} ${particle.splashY - 8}, ${particle.x} ${particle.splashY} Q ${particle.x + 4} ${particle.splashY - 8}, ${particle.x + 8} ${particle.splashY}"></path>
               </g>
             `).join("")}
           </g>
