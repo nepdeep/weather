@@ -50,6 +50,10 @@
       --wash-a: 255, 206, 140;
       --wash-b: 255, 184, 158;
       --wash-strength: 0.55;
+      --daypart-a: 255, 206, 140;
+      --daypart-b: 255, 184, 158;
+      --daypart-strength: 0;
+      --daypart-soft: 0;
       --r-sm: 10px;
       --r-md: 14px;
       --r-lg: 20px;
@@ -95,8 +99,42 @@
       --shadow: 0 18px 44px rgba(60, 84, 124, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.65);
 
       background-image:
+        linear-gradient(180deg, rgba(var(--daypart-a), var(--daypart-strength)), rgba(var(--daypart-b), var(--daypart-soft)) 46%, transparent 82%),
         radial-gradient(circle at 12% 12%, rgba(var(--wash-a), var(--wash-strength)), transparent 42%),
         radial-gradient(circle at 88% 8%, rgba(var(--wash-b), var(--wash-strength)), transparent 40%);
+    }
+
+    body[data-daypart="dawn"] {
+      --daypart-a: 255, 185, 128;
+      --daypart-b: 255, 221, 170;
+      --daypart-strength: 0.28;
+      --daypart-soft: 0.12;
+    }
+
+    body[data-daypart="day"] {
+      --daypart-a: 125, 198, 255;
+      --daypart-b: 255, 245, 180;
+      --daypart-strength: 0.12;
+      --daypart-soft: 0.05;
+    }
+
+    body[data-daypart="dusk"] {
+      --daypart-a: 255, 145, 105;
+      --daypart-b: 174, 108, 255;
+      --daypart-strength: 0.3;
+      --daypart-soft: 0.16;
+    }
+
+    body[data-daypart="night"] {
+      --daypart-a: 32, 45, 92;
+      --daypart-b: 96, 70, 150;
+      --daypart-strength: 0.24;
+      --daypart-soft: 0.12;
+    }
+
+    body.light-mode[data-daypart="night"] {
+      --daypart-strength: 0.12;
+      --daypart-soft: 0.06;
     }
 
     body.light-mode .calendar-header,
@@ -127,7 +165,6 @@
     body.light-mode .refresh-button,
     body.light-mode .theme-toggle,
     body.light-mode .menu-toggle,
-    body.light-mode .view-button.is-active,
     body.light-mode .refresh-button:disabled:hover,
     body.light-mode .ghost-button:disabled:hover,
     body.light-mode .condition-chip:not(.is-active):hover {
@@ -243,10 +280,28 @@
 
     /* --- HEADER ACTIONS + THEME TOGGLE --- */
     .header-actions {
-      display: flex;
+      display: grid;
+      grid-template-columns: 44px max-content 44px;
       align-items: center;
-      gap: 8px;
+      gap: 4px 8px;
       margin-left: auto;
+    }
+
+    .refresh-cluster {
+      display: contents;
+    }
+
+    .last-updated {
+      grid-column: 2 / 4;
+      grid-row: 2;
+      justify-self: end;
+      max-width: 170px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: right;
+      white-space: nowrap;
     }
 
     .theme-toggle,
@@ -266,6 +321,16 @@
       transition: all 0.2s ease;
     }
 
+    .theme-toggle {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .header-actions .refresh-button {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
     .theme-toggle:hover,
     .menu-toggle:hover,
     .menu-toggle.is-open {
@@ -277,6 +342,8 @@
     .condition-menu-wrap {
       position: relative;
       display: inline-flex;
+      grid-column: 3;
+      grid-row: 1;
       flex-shrink: 0;
     }
 
@@ -360,6 +427,7 @@
       color: var(--text);
       background-color: var(--bg-dark);
       background-image:
+        linear-gradient(180deg, rgba(var(--daypart-a), var(--daypart-strength)), rgba(var(--daypart-b), var(--daypart-soft)) 46%, transparent 82%),
         radial-gradient(circle at 15% 50%, rgba(var(--glow-a), var(--glow-strength)), transparent 25%),
         radial-gradient(circle at 85% 30%, rgba(var(--glow-b), var(--glow-strength)), transparent 25%);
       background-attachment: fixed;
@@ -1151,41 +1219,6 @@
       color: var(--neon-red);
     }
 
-    .view-style-picker {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .view-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .view-button {
-      min-height: 38px;
-      border-radius: var(--r-pill);
-      padding: 0 16px;
-      color: var(--muted);
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      font-family: var(--font-body);
-      font-weight: 600;
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      transition: color 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
-    }
-
-    .view-button.is-active {
-      color: var(--neon-blue);
-      background: var(--accent-soft);
-      border-color: var(--accent-soft-border);
-      box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.12);
-    }
-
     .feature-grid {
       display: grid;
       grid-auto-flow: column;
@@ -1224,6 +1257,19 @@
       background: rgba(24, 127, 176, 0.13);
       filter: blur(24px);
       pointer-events: none;
+    }
+
+    .rain-panel[data-rain-intensity="steady"],
+    .rain-panel[data-rain-intensity="heavy"] {
+      border-color: rgba(255, 255, 255, 0.14);
+      background:
+        linear-gradient(115deg, rgba(24, 127, 176, 0.18), transparent 48%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 70%),
+        var(--glass-bg);
+    }
+
+    .rain-panel[data-rain-intensity="heavy"] {
+      box-shadow: var(--shadow), 0 0 34px rgba(255, 255, 255, 0.08), 0 0 44px rgba(34, 184, 240, 0.13);
     }
 
     .rain-panel-header {
@@ -1329,6 +1375,7 @@
 
     .rain-water-motion {
       clip-path: url("#rainAreaClip");
+      opacity: var(--rain-motion-opacity, 1);
       pointer-events: none;
     }
 
@@ -1484,6 +1531,46 @@
       100% {
         opacity: 0;
         transform: translateY(-4px) scale(1.35);
+      }
+    }
+
+    .page.is-ready .forecast-card,
+    .page.is-ready .rain-panel,
+    .page.is-ready .calendar-panel,
+    .page.is-ready .timeline-panel {
+      animation: contentLiftIn 520ms ease both;
+    }
+
+    .page.is-ready .forecast-card:nth-child(2) {
+      animation-delay: 70ms;
+    }
+
+    .page.is-ready .forecast-card:nth-child(3) {
+      animation-delay: 140ms;
+    }
+
+    .page.is-ready .rain-panel {
+      animation-delay: 170ms;
+    }
+
+    .page.is-ready .calendar-panel,
+    .page.is-ready .timeline-panel {
+      animation-delay: 220ms;
+    }
+
+    .page.is-ready .day-cell {
+      animation: contentLiftIn 440ms ease both;
+      animation-delay: calc(var(--cell-index, 0) * 12ms);
+    }
+
+    @keyframes contentLiftIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
@@ -2143,6 +2230,19 @@
         padding-inline: 9px;
       }
 
+      .header-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: start;
+      }
+
+      .last-updated {
+        grid-column: 1 / -1;
+        justify-self: start;
+        max-width: none;
+        text-align: left;
+      }
+
       .search-row {
         grid-template-columns: 1fr;
       }
@@ -2234,12 +2334,14 @@
 
       <div class="title-row">
         <div class="title-block">
-          <h1>30-Day Weather Calendar</h1>
           <p id="locationSummary">Eindhoven, Netherlands</p>
         </div>
         <div class="header-actions">
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to bright theme" title="Switch to bright theme">☀</button>
-          <button class="refresh-button" id="refreshButton" type="button">↻ Refresh</button>
+          <div class="refresh-cluster">
+            <button class="refresh-button" id="refreshButton" type="button">↻ Refresh</button>
+            <span class="last-updated" id="lastUpdated">Not updated yet</span>
+          </div>
           <div class="condition-menu-wrap">
             <button class="menu-toggle" id="conditionMenuToggle" type="button" aria-label="Open weather theme menu" aria-expanded="false" aria-controls="conditionMenu">&#9776;</button>
             <div class="condition-menu" id="conditionMenu" hidden>
@@ -2260,11 +2362,6 @@
     </header>
 
     <p class="status" id="status" role="status" aria-live="polite">Loading forecast...</p>
-
-    <section class="view-style-picker view-buttons" role="tablist" aria-label="Forecast presentation styles">
-      <button class="view-button is-active" type="button" data-view="calendar" role="tab" aria-selected="true">Calendar</button>
-      <button class="view-button" type="button" data-view="timeline" role="tab" aria-selected="false">Timeline</button>
-    </section>
 
     <section class="feature-grid" aria-label="Featured forecast cards">
       <article class="forecast-card" id="todayCard"></article>
@@ -2380,6 +2477,7 @@
     };
 
     const els = {
+      page: document.querySelector(".page"),
       brandName: document.querySelector("#brandName"),
       brandMark: document.querySelector(".brand-mark"),
       locationSummary: document.querySelector("#locationSummary"),
@@ -2387,16 +2485,17 @@
       searchButton: document.querySelector("#searchButton"),
       suggestions: document.querySelector("#suggestions"),
       refreshButton: document.querySelector("#refreshButton"),
+      lastUpdated: document.querySelector("#lastUpdated"),
       status: document.querySelector("#status"),
       todayCard: document.querySelector("#todayCard"),
       tomorrowCard: document.querySelector("#tomorrowCard"),
       dayAfterCard: document.querySelector("#dayAfterCard"),
       rainSummary: document.querySelector("#rainSummary"),
       rainDetail: document.querySelector("#rainDetail"),
+      rainPanel: document.querySelector(".rain-panel"),
       rainStrip: document.querySelector("#rainStrip"),
       recentCities: document.querySelector("#recentCities"),
       recentChips: document.querySelector("#recentChips"),
-      viewButtons: document.querySelectorAll(".view-button"),
       viewPanels: document.querySelectorAll(".view-panel"),
       monthTitle: document.querySelector("#monthTitle"),
       calendarMeta: document.querySelector("#calendarMeta"),
@@ -2413,15 +2512,16 @@
     let forecastState = null;
     let searchResults = [];
     let searchTimer = null;
-    let activeView = "calendar";
     let selectedTimelineKey = null;
     let previewWeatherKey = null;
+    let lastUpdatedAt = null;
 
     init();
 
     function init() {
       setupTheme();
       setupConditionPreview();
+      updateDaypart(locationState.timezone || DEFAULT_LOCATION.timezone);
       els.cityInput.value = locationState.name;
       setBrand();
       bindEvents();
@@ -2547,18 +2647,9 @@
           els.conditionMenuToggle.blur();
         }
       });
-      els.viewButtons.forEach((button) => {
-        button.addEventListener("click", () => setActiveView(button.dataset.view));
-      });
     }
 
     function setActiveView(view) {
-      activeView = view;
-      els.viewButtons.forEach((button) => {
-        const isActive = button.dataset.view === view;
-        button.classList.toggle("is-active", isActive);
-        button.setAttribute("aria-selected", String(isActive));
-      });
       els.viewPanels.forEach((panel) => {
         panel.hidden = panel.dataset.viewPanel !== view;
       });
@@ -2621,7 +2712,8 @@
         const params = new URLSearchParams({
           latitude: locationState.latitude,
           longitude: locationState.longitude,
-          daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,weather_code,wind_speed_10m_max",
+          current: "temperature_2m",
+          daily: "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,weather_code,wind_speed_10m_max,sunrise,sunset",
           hourly: "precipitation_probability,rain,showers",
           timezone: locationState.timezone || DEFAULT_LOCATION.timezone,
           forecast_days: FORECAST_DAYS
@@ -2638,7 +2730,9 @@
         }
 
         forecastState = normalizeForecast(forecast);
+        lastUpdatedAt = new Date();
         renderApp();
+        updateLastUpdatedLabel();
         setStatus("");
       } catch (error) {
         console.error(error);
@@ -2661,7 +2755,9 @@
           rainProbability: daily.precipitation_probability_max?.[index],
           precipitation: daily.precipitation_sum?.[index],
           code: daily.weather_code?.[index],
-          wind: daily.wind_speed_10m_max?.[index]
+          wind: daily.wind_speed_10m_max?.[index],
+          sunrise: daily.sunrise?.[index],
+          sunset: daily.sunset?.[index]
         });
       });
 
@@ -2679,8 +2775,14 @@
           })
         : [];
 
+      const current = forecast.current || {};
+
       return {
         timezone: forecast.timezone || locationState.timezone || DEFAULT_LOCATION.timezone,
+        current: {
+          temperature: Number.isFinite(current.temperature_2m) ? current.temperature_2m : null,
+          timeKey: current.time || null
+        },
         byDate,
         hourlyRain,
         startDate: daily.time[0],
@@ -2697,19 +2799,23 @@
       els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone}`;
       setBrand();
       startClock(timezone);
+      updateDaypart(timezone);
       applyWeatherTheme(forecastState.byDate.get(todayKey));
-      renderFeatureCard(els.todayCard, "Today", todayKey, forecastState.byDate.get(todayKey));
+      renderFeatureCard(els.todayCard, "Today", todayKey, forecastState.byDate.get(todayKey), {
+        currentTemperature: getCurrentTemperatureForDate(todayKey)
+      });
       renderFeatureCard(els.tomorrowCard, "Tomorrow", tomorrowKey, forecastState.byDate.get(tomorrowKey));
       const dayAfterKey = addDays(todayKey, 2);
       renderFeatureCard(els.dayAfterCard, formatCompactWeekday(dayAfterKey), dayAfterKey, forecastState.byDate.get(dayAfterKey));
       renderRainWatch();
       renderCalendar(todayKey);
       renderTimeline(todayKey);
-      setActiveView(activeView);
+      setActiveView("calendar");
       els.calendarMeta.textContent = `Forecast available ${formatShortDate(forecastState.startDate)}–${formatShortDate(forecastState.endDate)}`;
+      playReadyAnimation();
     }
 
-    function renderFeatureCard(card, label, dateKey, day) {
+    function renderFeatureCard(card, label, dateKey, day, options = {}) {
       if (!day) {
         card.innerHTML = `
           <div class="card-kicker">${label}</div>
@@ -2725,6 +2831,11 @@
       }
 
       const [weatherLabel, icon] = weatherCodes[day.code] || ["Unknown", "❔"];
+      const showCurrentTemperature = Number.isFinite(options.currentTemperature);
+      const primaryTemperature = showCurrentTemperature ? options.currentTemperature : day.max;
+      const secondaryTemperature = showCurrentTemperature
+        ? `High/Low ${formatTemperature(day.max)} / ${formatTemperature(day.min)}`
+        : `${formatTemperature(day.min)} low`;
       card.innerHTML = `
         <div class="card-kicker">${label}</div>
         <div class="card-date">${formatLongDate(dateKey)}</div>
@@ -2734,8 +2845,8 @@
             <div class="weather-label">${weatherLabel}</div>
           </div>
           <div class="temps" aria-label="Temperature">
-            <div class="temp-max">${formatTemperature(day.max)}</div>
-            <div class="temp-min">${formatTemperature(day.min)} low</div>
+            <div class="temp-max">${formatTemperature(primaryTemperature)}</div>
+            <div class="temp-min">${secondaryTemperature}</div>
           </div>
         </div>
         <div class="metric-grid">
@@ -2746,6 +2857,13 @@
       `;
     }
 
+    function getCurrentTemperatureForDate(dateKey) {
+      const current = forecastState?.current;
+      if (!Number.isFinite(current?.temperature)) return null;
+      if (typeof current.timeKey === "string" && current.timeKey.slice(0, 10) !== dateKey) return null;
+      return current.temperature;
+    }
+
     function renderRainWatch() {
       const hourlyRain = forecastState?.hourlyRain || [];
       const nowParts = getDateTimePartsInTimeZone(new Date(), forecastState?.timezone || DEFAULT_LOCATION.timezone);
@@ -2754,6 +2872,7 @@
       const hours = startIndex >= 0 ? hourlyRain.slice(startIndex, startIndex + 8) : [];
 
       if (!hours.length) {
+        els.rainPanel.dataset.rainIntensity = "dry";
         els.rainSummary.textContent = "Hourly rainfall unavailable";
         els.rainDetail.textContent = "Try refreshing the forecast";
         els.rainStrip.innerHTML = `<div class="empty-state">No hourly data available.</div>`;
@@ -2772,7 +2891,9 @@
       } else {
         els.rainSummary.textContent = "Dry for the next 8 hours";
       }
-      els.rainDetail.textContent = `${Math.round(maxProbability)}% peak chance | ${formatMillimeters(totalRain)} expected`;
+      const rainProfile = getRainWatchProfile(maxProbability, totalRain);
+      els.rainPanel.dataset.rainIntensity = rainProfile.key;
+      els.rainDetail.textContent = `${Math.round(maxProbability)}% peak chance | ${formatMillimeters(totalRain)} expected | ${rainProfile.label}`;
 
       const chartWidth = 800;
       const chartHeight = 230;
@@ -2792,14 +2913,14 @@
       const linePath = createSmoothChartPath(points);
       const areaPath = `${linePath} L ${points.at(-1).x} ${plotBottom} L ${points[0].x} ${plotBottom} Z`;
       const ticks = Array.from({ length: 4 }, (_, index) => chartMaximum * index / 3);
-      const splashParticleCount = 21;
+      const splashParticleCount = rainProfile.particles;
       const splashParticles = Array.from({ length: splashParticleCount }, (_, index) => {
         const x = plotLeft + 24 + ((plotWidth - 48) * index) / (splashParticleCount - 1);
         const surfaceY = getChartSurfaceY(points, x);
         const splashY = Math.min(plotBottom - 7, surfaceY + 14 + (index % 4) * 7);
         return {
           x,
-          dropTop: surfaceY + 2,
+          dropTop: surfaceY + 10,
           splashY,
           delay: `${(-index * 0.19).toFixed(2)}s`,
           duration: `${(1.55 + (index % 5) * 0.16).toFixed(2)}s`
@@ -2832,7 +2953,7 @@
             `;
           }).join("")}
           <path class="rain-chart-area" d="${areaPath}"></path>
-          <g class="rain-water-motion" aria-hidden="true">
+          <g class="rain-water-motion" aria-hidden="true" style="--rain-motion-opacity:${rainProfile.motionOpacity}">
             <rect class="rain-water-sheen" x="${plotLeft - 100}" y="${plotTop}" width="${plotWidth + 200}" height="${plotHeight}"></rect>
             ${splashParticles.map((particle) => `
               <g style="--delay:${particle.delay};--duration:${particle.duration}">
@@ -2858,6 +2979,19 @@
           }).join("")}
         </svg>
       `;
+    }
+
+    function getRainWatchProfile(maxProbability, totalRain) {
+      if (maxProbability >= 70 || totalRain >= 3) {
+        return { key: "heavy", label: "heavy pattern", particles: 34, motionOpacity: 1 };
+      }
+      if (maxProbability >= 45 || totalRain >= 1) {
+        return { key: "steady", label: "steady pattern", particles: 28, motionOpacity: 0.92 };
+      }
+      if (maxProbability >= 20 || totalRain >= 0.1) {
+        return { key: "light", label: "light pattern", particles: 22, motionOpacity: 0.74 };
+      }
+      return { key: "dry", label: "calm pattern", particles: 14, motionOpacity: 0.42 };
     }
 
     function getChartSurfaceY(points, x) {
@@ -2907,6 +3041,7 @@
         const isOutside = cell >= visibleDays;
         const cellEl = document.createElement("article");
         cellEl.className = "day-cell";
+        cellEl.style.setProperty("--cell-index", cell);
 
         if (isOutside) {
           cellEl.classList.add("is-outside");
@@ -3054,9 +3189,11 @@
     }
 
     function renderLoading() {
+      els.page.classList.remove("is-ready");
       els.todayCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.tomorrowCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
       els.dayAfterCard.innerHTML = `<div class="loading-skeleton" style="height: 148px; border-radius: 8px;"></div>`;
+      els.rainPanel.dataset.rainIntensity = "dry";
       els.rainSummary.textContent = "Loading rainfall outlook...";
       els.rainDetail.textContent = "Checking hourly forecast";
       els.rainStrip.innerHTML = `<div class="loading-skeleton" style="height: 220px; min-width: 680px; border-radius: 10px;"></div>`;
@@ -3069,9 +3206,11 @@
     }
 
     function renderUnavailableShell() {
+      els.page.classList.remove("is-ready");
       const timezone = locationState.timezone || DEFAULT_LOCATION.timezone;
       const todayParts = getDatePartsInTimeZone(new Date(), timezone);
       forecastState = { timezone, byDate: new Map(), hourlyRain: [], startDate: null, endDate: null };
+      updateDaypart(timezone);
       applyWeatherTheme(null);
       renderFeatureCard(els.todayCard, "Today", toDateKey(todayParts.year, todayParts.month, todayParts.day));
       renderFeatureCard(els.tomorrowCard, "Tomorrow", addDays(toDateKey(todayParts.year, todayParts.month, todayParts.day), 1));
@@ -3201,6 +3340,27 @@
       els.refreshButton.disabled = isBusy;
       els.searchButton.disabled = isBusy;
       els.refreshButton.textContent = isBusy ? "Loading..." : "↻ Refresh";
+      if (isBusy) {
+        els.lastUpdated.textContent = lastUpdatedAt ? "Updating..." : "First update...";
+      } else {
+        updateLastUpdatedLabel();
+      }
+    }
+
+    function updateLastUpdatedLabel() {
+      if (!lastUpdatedAt) {
+        els.lastUpdated.textContent = "Not updated yet";
+        return;
+      }
+
+      const timezone = forecastState?.timezone || locationState.timezone || DEFAULT_LOCATION.timezone;
+      const time = lastUpdatedAt.toLocaleTimeString("en-US", {
+        timeZone: timezone,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+      els.lastUpdated.textContent = `Updated ${time}`;
     }
 
     function setBrand() {
@@ -3249,14 +3409,53 @@
           hour12: false
         });
         els.locationSummary.textContent = `${formatLocation(locationState)} · ${timezone} · ${time}`;
+        updateDaypart(timezone);
       }
       tick();
       clockTimer = setInterval(tick, 1000);
     }
 
+    function updateDaypart(timezone) {
+      document.body.dataset.daypart = getSolarDaypart(new Date(), timezone);
+    }
+
+    function getSolarDaypart(date, timezone) {
+      const parts = getDateTimePartsInTimeZone(date, timezone);
+      const todayKey = toDateKey(parts.year, parts.month, parts.day);
+      const currentMinutes = parts.hour * 60 + parts.minute;
+      const today = forecastState?.byDate?.get(todayKey);
+      const sunriseMinutes = getIsoLocalMinutes(today?.sunrise);
+      const sunsetMinutes = getIsoLocalMinutes(today?.sunset);
+
+      if (Number.isFinite(sunriseMinutes) && Number.isFinite(sunsetMinutes)) {
+        if (currentMinutes < sunriseMinutes - 45 || currentMinutes > sunsetMinutes + 60) return "night";
+        if (currentMinutes <= sunriseMinutes + 75) return "dawn";
+        if (currentMinutes >= sunsetMinutes - 75) return "dusk";
+        return "day";
+      }
+
+      if (currentMinutes < 5 * 60 || currentMinutes >= 21 * 60) return "night";
+      if (currentMinutes < 8 * 60) return "dawn";
+      if (currentMinutes >= 17 * 60) return "dusk";
+      return "day";
+    }
+
+    function getIsoLocalMinutes(value) {
+      if (typeof value !== "string") return NaN;
+      const match = value.match(/T(\d{2}):(\d{2})/);
+      if (!match) return NaN;
+      return Number(match[1]) * 60 + Number(match[2]);
+    }
+
     function setStatus(message, isError = false) {
       els.status.textContent = message;
       els.status.classList.toggle("error", isError);
+    }
+
+    function playReadyAnimation() {
+      els.page.classList.remove("is-ready");
+      void els.page.offsetHeight;
+      els.page.classList.add("is-ready");
     }
 
     function getDatePartsInTimeZone(date, timezone) {
